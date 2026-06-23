@@ -43,7 +43,7 @@ export function Page({
         onFiltersClick={() => setIsFiltersOpen(true)}
       />
       {chips && chips.length > 0 && <FilterBar chips={chips} onChipsChange={setChips} />}
-      <div className="space-y-4 px-6 py-5 min-w-0 flex-1">{children}</div>
+      <div className="space-y-4 px-6 py-5 min-w-0 flex-1 animate-fade-in-up">{children}</div>
 
       <ManageFiltersSidebar
         open={isFiltersOpen}

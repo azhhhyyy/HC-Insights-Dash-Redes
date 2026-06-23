@@ -57,10 +57,10 @@ export function KpiCard({
           : undefined
       }
       className={cn(
-        "group relative gap-0 rounded-lg border bg-card p-4 shadow-xs transition-colors duration-150",
+        "group relative gap-0 rounded-xl border border-transparent bg-card p-4 shadow-sm transition-[box-shadow,transform,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
         interactive &&
-          "cursor-pointer hover:border-primary/40 hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-        selected && "border-primary",
+          "cursor-pointer hover:shadow-md hover:bg-accent/30 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+        selected && "ring-2 ring-primary/40 shadow-md",
         className,
       )}
     >
@@ -93,8 +93,8 @@ export function KpiCard({
             const content = (
               <div className={cn("flex flex-col", s.tooltip && "cursor-help")}>
                 <span
-                  className={cn("tracking-tight text-foreground", s.className)}
-                  style={{ fontSize: "1.4rem", lineHeight: 1.1 }}
+                  className={cn("tracking-tight text-foreground tabular-nums", s.className)}
+                  style={{ fontSize: "1.4rem", lineHeight: 1.1, fontVariantNumeric: "tabular-nums" }}
                 >
                   {s.value}
                 </span>
@@ -127,8 +127,8 @@ export function KpiCard({
       ) : (
         <div className="mt-3">
           <div
-            className="tracking-tight text-foreground"
-            style={{ fontSize: "1.85rem", lineHeight: 1.05 }}
+            className="tracking-tight text-foreground tabular-nums"
+            style={{ fontSize: "1.85rem", lineHeight: 1.05, fontVariantNumeric: "tabular-nums" }}
           >
             {value}
           </div>

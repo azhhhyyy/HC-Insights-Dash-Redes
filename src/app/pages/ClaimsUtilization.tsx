@@ -20,7 +20,7 @@ export default function ClaimsUtilization() {
 
   return (
     <Page title="Claims Utilization" chips={claimsChips}>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 stagger-section mb-6">
         <KpiCard icon={Users} title="Total Active Patients" value="2,823" caption="Total active patients" info="Total patients covered under DPC or Non-DPC for the selected timeframe." />
         <KpiCard icon={UserCheck} title="DPC Patients" value="1,894" caption="Patients with DPC coverage" info="Patients enrolled in DPC during the selected timeframe." />
         <KpiCard icon={UserMinus} title="Non DPC Patients" value="929" caption="Patients without DPC coverage" info="Patients covered under Non-DPC for the selected timeframe." />
@@ -28,7 +28,8 @@ export default function ClaimsUtilization() {
         <KpiCard icon={CalendarRange} title="Non DPC Member Months" value="6,902" caption="Total Non DPC member months" info="Cumulative months patients were covered under Non-DPC for cost and usage analysis." />
       </div>
 
-      <Panel>
+      <div className="stagger-section mb-6">
+        <Panel>
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-sm text-foreground">Claims Costs - Per Member Per Month</h3>
           <RadioGroup
@@ -61,14 +62,17 @@ export default function ClaimsUtilization() {
           ]}
           height={340}
         />
-      </Panel>
+        </Panel>
+      </div>
 
-      <Panel title="High Cost Claims #">
+      <div className="stagger-section">
+        <Panel title="High Cost Claims #">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:max-w-md">
           <KpiCard title="High Cost Claims #" value="48" caption="High cost claims" info="Number of claims categorized as high-cost, helping identify cost outliers." />
           <KpiCard title="# of Members with high cost claims" value="31" caption="Members affected" info="Unique patients with high-cost claims, indicating distribution and concentration of high-cost care." />
         </div>
-      </Panel>
+        </Panel>
+      </div>
     </Page>
   );
 }

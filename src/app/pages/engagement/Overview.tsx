@@ -34,7 +34,7 @@ export default function EngagementOverview() {
 
   return (
     <Page title="Engagement and Utilization" chips={engagementChips}>
-      <section>
+      <section className="stagger-section">
         <SectionLabel>Patient Activity</SectionLabel>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
           <KpiCard
@@ -83,7 +83,7 @@ export default function EngagementOverview() {
         </div>
       </section>
 
-      <section>
+      <section className="stagger-section">
         <SectionLabel>Encounters & Prescriptions</SectionLabel>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
           <KpiCard
@@ -128,7 +128,7 @@ export default function EngagementOverview() {
         </div>
       </section>
 
-      <section>
+      <section className="stagger-section">
         <SectionLabel>Messaging & Digital</SectionLabel>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
           <KpiCard

@@ -95,18 +95,18 @@ export default function CostSavings() {
   return (
     <Page title="Cost Savings" chips={costSavingsChips}>
       {/* Top Grid Area */}
-      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3 stagger-section">
         {/* Left Column */}
         <div className="flex flex-col gap-6 lg:col-span-1">
           {/* Total Savings KPI */}
-          <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <div className="flex flex-col rounded-2xl border border-transparent bg-card p-6 shadow-sm">
             <div className="mb-6 flex items-center justify-between">
               <span className="text-sm font-medium text-foreground">Total Savings</span>
               <Info className="size-4 text-muted-foreground" />
             </div>
             <div>
-              <div className="text-3xl font-bold tracking-tight text-emerald-600 mb-1">
-                $ 1,577,117
+              <div className="text-3xl font-bold tracking-tight text-emerald-600 mb-1 tabular-nums">
+                $1,577,117
               </div>
               <p className="text-xs text-muted-foreground">
                 Difference between value and investment.
@@ -115,7 +115,7 @@ export default function CostSavings() {
           </div>
 
           {/* Info Card */}
-          <div className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex flex-col rounded-2xl border border-transparent bg-card p-5 shadow-sm">
             <ul className="space-y-2 text-xs text-foreground list-disc pl-4">
               <li>Savings are based on encounter counts, CPT codes, and fee-for-service rates from DPC locations.</li>
               <li>Procedure pricing uses Healthcare Bluebook or CMS fee schedules.</li>
@@ -127,7 +127,7 @@ export default function CostSavings() {
         </div>
 
         {/* Right Column (Overview Chart) */}
-        <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm lg:col-span-2 min-h-[350px]">
+        <div className="flex flex-col rounded-2xl border border-transparent bg-card p-6 shadow-sm lg:col-span-2 min-h-[350px]">
           <h3 className="mb-6 text-sm font-medium text-foreground">Overview</h3>
           <div className="flex-1 w-full min-h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -164,7 +164,7 @@ export default function CostSavings() {
       </div>
 
       {/* Middle Section (Pie Chart Breakdown) */}
-      <div className="mb-6 flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm min-h-[400px]">
+      <div className="mb-6 flex flex-col rounded-2xl border border-transparent bg-card p-6 shadow-sm min-h-[400px] stagger-section">
         <div className="mb-6">
           <h3 className="text-sm font-medium text-foreground">Total Value - Breakdown (Service Types)</h3>
           <p className="text-xs text-muted-foreground mt-1">Note: Hover service types to highlight, click legends for patient details.</p>
@@ -176,7 +176,7 @@ export default function CostSavings() {
             {pieData.map((item, index) => (
               <div 
                 key={index} 
-                className="flex items-center gap-2 cursor-pointer text-sm font-medium text-foreground transition-all duration-200 hover:translate-x-1"
+                className="flex items-center gap-2 cursor-pointer text-sm font-medium text-foreground transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:translate-x-1"
                 style={{ opacity: activeIndex === undefined || activeIndex === index ? 1 : 0.4 }}
                 onMouseEnter={() => setActiveIndex(index)}
                 onMouseLeave={() => setActiveIndex(undefined)}
@@ -221,7 +221,7 @@ export default function CostSavings() {
       </div>
 
       {/* Bottom Section (Data Table) */}
-      <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden flex flex-col min-h-[200px]">
+      <div className="rounded-2xl border border-transparent bg-card shadow-sm overflow-hidden flex flex-col min-h-[200px] stagger-section">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-muted/50 border-b border-border text-muted-foreground font-semibold">

@@ -48,13 +48,13 @@ export function PageHeader({
               ))}
               <span className="text-slate-400">{title}</span>
             </nav>
-            <h2 className="text-foreground" style={{ fontSize: "1.4rem", lineHeight: 1.2 }}>
+            <h2 className="text-foreground text-balance" style={{ fontSize: "1.4rem", lineHeight: 1.2 }}>
               {title}
             </h2>
           </div>
         ) : (
           <div className="flex flex-col">
-            <h2 className="text-foreground" style={{ fontSize: "1.4rem", lineHeight: 1.2 }}>
+            <h2 className="text-foreground text-balance" style={{ fontSize: "1.4rem", lineHeight: 1.2 }}>
               {title}
             </h2>
             {subtitle && (
@@ -75,7 +75,7 @@ export function PageHeader({
         )}
         {showGenerateReport && (
           <div className="relative">
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2 pl-4 pr-3.5">
               <Download className="size-4" />
               Generate Report
             </Button>

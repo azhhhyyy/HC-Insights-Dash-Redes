@@ -46,7 +46,8 @@ export default function ChronicRisk() {
         />
       }
     >
-      <KpiCard
+      <div className="stagger-section mb-6">
+        <KpiCard
         icon={HeartPulse}
         className="max-w-xs"
         title="Chronic Condition Patients"
@@ -71,9 +72,10 @@ export default function ChronicRisk() {
             ? "Total Active Patients: 2823"
             : "Patients with Encounter(s): 2802"
         }
-      />
+              />
+      </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 stagger-section mb-6">
         <Panel title="Top Chronic Conditions">
           <div onClick={() => setShowTable(true)} className="cursor-pointer">
             <HorizontalBar
@@ -97,18 +99,20 @@ export default function ChronicRisk() {
       </div>
 
       {showTable ? (
-        <div className="space-y-2">
+        <div className="space-y-2 stagger-section">
           <h3 className="text-sm text-foreground">
             Top Chronic Conditions - Essential (primary) hypertension (I10)
           </h3>
           <DataTable columns={columns} rows={chronicConditionPatients} rowKey={(r) => r.id} />
         </div>
       ) : (
-        <Panel>
-          <p className="py-6 text-center text-sm text-muted-foreground">
-            Click a bar or label to show or hide patient details.
-          </p>
-        </Panel>
+        <div className="stagger-section">
+          <Panel>
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              Click a bar or label to show or hide patient details.
+            </p>
+          </Panel>
+        </div>
       )}
     </Page>
   );

@@ -105,7 +105,7 @@ function StatusDot({ status }: { status: string }) {
 
 function QuickActionCard({ title, description, impact, icon: Icon, onAction, badgeText = "AI Recommendation" }: any) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-primary/10 bg-gradient-to-br from-card to-primary/5 p-4 shadow-xs transition-all hover:shadow-sm hover:border-primary/20 flex flex-col justify-between group">
+    <div className="relative overflow-hidden rounded-xl border border-transparent bg-gradient-to-br from-card to-primary/5 p-4 shadow-sm transition-[box-shadow,transform,border-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-md hover:border-primary/20 flex flex-col justify-between group">
       <div className="absolute right-0 top-0 h-16 w-16 rounded-bl-full bg-primary/5 opacity-50 transition-all group-hover:scale-110" />
       
       <div className="flex items-start justify-between gap-2 mb-2">
@@ -127,11 +127,11 @@ function QuickActionCard({ title, description, impact, icon: Icon, onAction, bad
         <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
           {impact}
         </span>
-        <Button 
-          onClick={onAction}
-          size="sm" 
-          className="h-7 rounded-full px-3 text-[11px] bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-xs"
-        >
+          <Button 
+            onClick={onAction}
+            size="sm" 
+            className="h-7 rounded-full pl-3 pr-2.5 text-[11px] bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-xs transition-[background-color,transform] duration-150 active:scale-[0.96]"
+          >
           Review
         </Button>
       </div>
@@ -152,7 +152,7 @@ function KpiSparklineCard({
   return (
     <div 
       onClick={onClick}
-      className="group cursor-pointer rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md flex flex-col h-[240px]"
+      className="group cursor-pointer rounded-2xl border border-transparent bg-card p-6 shadow-sm transition-[box-shadow,transform,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-md active:scale-[0.98] flex flex-col h-[240px]"
     >
       <div className="flex items-center justify-between mb-4">
         <span className="text-sm font-medium text-muted-foreground">{title}</span>
@@ -162,7 +162,7 @@ function KpiSparklineCard({
       </div>
       
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-3xl font-bold tracking-tight text-foreground">{value}</span>
+        <span className="text-3xl font-bold tracking-tight text-foreground tabular-nums">{value}</span>
         <span className={cn(
           "inline-flex items-center rounded-md px-1.5 py-0.5 text-xs font-medium",
           changeType === "positive" ? "bg-emerald-50 text-emerald-600" : "bg-destructive/10 text-destructive"
@@ -222,7 +222,7 @@ export default function Home() {
   return (
     <Page title={greeting} subtitle={subtitleText}>
       {/* Quick Actions Row */}
-      <div className="mb-6">
+      <div className="mb-6 stagger-section">
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="size-4 text-primary animate-pulse" />
           <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">AI Powered Quick Actions</h3>
@@ -253,13 +253,13 @@ export default function Home() {
       </div>
 
       {/* Performance Overview Heading */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-3 stagger-section">
         <Activity className="size-4 text-slate-400" />
         <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Performance Overview</h3>
       </div>
 
       {/* Primary KPIs Row */}
-      <div className="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 stagger-section">
         <KpiSparklineCard 
           title="Total Active Patients"
           value="2,823"
@@ -306,11 +306,11 @@ export default function Home() {
       </div>
 
       {/* Main Content Area */}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3 stagger-section">
         
         {/* Chart Column - Styled like "Health Report Pending" from image */}
         <div className="flex flex-col gap-6 xl:col-span-2">
-          <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm min-h-[400px]">
+          <div className="flex flex-col rounded-2xl border border-transparent bg-card p-6 shadow-sm min-h-[400px]">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-foreground">Engagement Trends</h3>
@@ -374,7 +374,7 @@ export default function Home() {
           </div>
 
           {/* Chronic Risk Graph */}
-          <div className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-sm min-h-[400px]">
+          <div className="flex flex-col rounded-2xl border border-transparent bg-card p-6 shadow-sm min-h-[400px]">
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-foreground">Chronic Risk</h3>
@@ -454,11 +454,11 @@ export default function Home() {
         <div className="flex flex-col gap-6">
           
           {/* Cost Savings Overview */}
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm flex flex-col min-h-[220px]">
+          <div className="rounded-2xl border border-transparent bg-card p-6 shadow-sm flex flex-col min-h-[220px]">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h3 className="font-semibold text-foreground mb-2">Cost Savings</h3>
-                <div className="text-2xl font-bold tracking-tight text-emerald-600">
+                <div className="text-2xl font-bold tracking-tight text-emerald-600 tabular-nums">
                   $1,577,117 <span className="text-sm font-medium text-emerald-600/80">saved</span>
                 </div>
               </div>
@@ -503,7 +503,7 @@ export default function Home() {
           </div>
 
           {/* Recent Activities */}
-          <div className="rounded-2xl border border-border bg-card shadow-sm flex-1 flex flex-col overflow-hidden min-h-0 max-h-[520px]">
+          <div className="rounded-2xl border border-transparent bg-card shadow-sm flex-1 flex flex-col overflow-hidden min-h-0 max-h-[520px]">
             <div className="flex items-center justify-between border-b border-border/50 p-6 bg-card z-10 shrink-0">
               <h3 className="font-semibold text-foreground">Recent Activities</h3>
               <Button variant="ghost" size="sm" className="h-8 text-xs font-semibold text-primary">View All</Button>
@@ -513,7 +513,7 @@ export default function Home() {
                 const isLast = idx === recentActivity.length - 1;
                 const Icon = activity.icon;
                 return (
-                  <div key={activity.id} className={cn("flex items-start gap-4 px-6 py-4 hover:bg-slate-50/50 transition-colors", !isLast && "border-b border-border/50")}>
+                  <div key={activity.id} className={cn("flex items-start gap-4 px-6 py-4 hover:bg-slate-50/50 transition-[background-color] duration-150", !isLast && "border-b border-border/50")}>
                     <div className="flex size-[38px] shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-600">
                       <Icon className="size-[18px]" />
                     </div>

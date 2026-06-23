@@ -211,10 +211,20 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   ::selection {
     background-color: var(--primary);
     color: var(--primary-foreground);
+  }
+
+  /* Typography: text-wrap for headings and body */
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+  p, li, figcaption, blockquote {
+    text-wrap: pretty;
   }
 
   ::-webkit-scrollbar {
@@ -232,3 +242,81 @@
     background: #64748b;
   }
 }
+
+/* Stagger enter animation system */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes subtleExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+    filter: blur(4px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Stagger children: apply .stagger-container to parent, .stagger-item to children */
+.stagger-item {
+  opacity: 0;
+  animation: fadeInUp 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger-item:nth-child(1)  { animation-delay: 0ms; }
+.stagger-item:nth-child(2)  { animation-delay: 60ms; }
+.stagger-item:nth-child(3)  { animation-delay: 120ms; }
+.stagger-item:nth-child(4)  { animation-delay: 180ms; }
+.stagger-item:nth-child(5)  { animation-delay: 240ms; }
+.stagger-item:nth-child(6)  { animation-delay: 300ms; }
+.stagger-item:nth-child(7)  { animation-delay: 360ms; }
+.stagger-item:nth-child(8)  { animation-delay: 420ms; }
+.stagger-item:nth-child(9)  { animation-delay: 480ms; }
+.stagger-item:nth-child(10) { animation-delay: 540ms; }
+.stagger-item:nth-child(n+11) { animation-delay: 600ms; }
+
+/* Section-level stagger (larger gaps between page sections) */
+.stagger-section {
+  opacity: 0;
+  animation: fadeInUp 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.stagger-section:nth-child(1) { animation-delay: 0ms; }
+.stagger-section:nth-child(2) { animation-delay: 100ms; }
+.stagger-section:nth-child(3) { animation-delay: 200ms; }
+.stagger-section:nth-child(4) { animation-delay: 300ms; }
+.stagger-section:nth-child(5) { animation-delay: 400ms; }
+.stagger-section:nth-child(6) { animation-delay: 500ms; }
+.stagger-section:nth-child(n+7) { animation-delay: 600ms; }

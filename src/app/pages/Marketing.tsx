@@ -16,7 +16,7 @@ import { seoKeywords } from "../data/datasets";
 export default function Marketing() {
   return (
     <Page title="Marketing" chips={[]} showGenerateReport={false}>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-section mb-6">
         <KpiCard icon={Search} title="SEO Performance" value="29" caption="Total Keywords" />
         <KpiCard
           icon={Mail}
@@ -48,7 +48,8 @@ export default function Marketing() {
         />
       </div>
 
-      <Panel title="SEO Performance">
+      <div className="stagger-section">
+        <Panel title="SEO Performance">
         <div className="overflow-x-auto rounded-lg border">
           <Table>
             <TableHeader>
@@ -66,12 +67,12 @@ export default function Marketing() {
             </TableHeader>
             <TableBody>
               {seoKeywords.map((r) => (
-                <TableRow key={r.keyword}>
+                <TableRow key={r.keyword} className="transition-[background-color,transform] duration-150 ease-out hover:bg-secondary/40">
                   <TableCell className={r.highlight ? "text-sm text-primary" : "text-sm"}>{r.keyword}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{r.volume}</TableCell>
-                  <TableCell className="border-l text-center text-sm">{r.april}</TableCell>
-                  <TableCell className="text-center text-sm">{r.may}</TableCell>
-                  <TableCell className="text-center text-sm">{r.june}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground tabular-nums">{r.volume}</TableCell>
+                  <TableCell className="border-l text-center text-sm tabular-nums">{r.april}</TableCell>
+                  <TableCell className="text-center text-sm tabular-nums">{r.may}</TableCell>
+                  <TableCell className="text-center text-sm tabular-nums">{r.june}</TableCell>
                   <TableCell className="border-l">
                     <Sparkline data={r.trend} />
                   </TableCell>
@@ -83,7 +84,8 @@ export default function Marketing() {
         <div className="flex items-center justify-between px-1 pt-3 text-xs text-muted-foreground">
           <span>Showing 1 to 10 of 29 entries</span>
         </div>
-      </Panel>
+        </Panel>
+      </div>
     </Page>
   );
 }

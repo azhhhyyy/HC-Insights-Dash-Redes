@@ -66,7 +66,7 @@ export function DataTable<T>({
     a === "right" ? "text-right" : a === "center" ? "text-center" : "text-left";
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-card shadow-xs flex flex-col w-full min-w-0 h-full flex-1">
+    <div className="overflow-hidden rounded-xl border border-transparent bg-card shadow-sm flex flex-col w-full min-w-0 h-full flex-1">
       <div className="overflow-auto w-full min-w-0 flex-1 flex flex-col">
         <Table className="flex-1">
           <TableHeader className="sticky top-0 z-10">
@@ -96,7 +96,7 @@ export function DataTable<T>({
               visible.map((row, i) => (
                 <TableRow
                   key={rowKey(row, start + i)}
-                  className="border-b border-border/60 transition-colors hover:bg-secondary/40"
+                  className="border-b border-border/60 transition-[background-color,transform] duration-150 ease-out hover:bg-secondary/40"
                 >
                   {columns.map((c) => (
                     <TableCell
@@ -143,14 +143,14 @@ export function DataTable<T>({
       {/* Footer / pagination */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t bg-muted/30 px-4 py-2.5 text-sm text-slate-500">
         <span>
-          Showing <span className="text-foreground">{rows.length === 0 ? 0 : start + 1}</span> to{" "}
-          <span className="text-foreground">{Math.min(start + pageSize, rows.length)}</span> of{" "}
-          <span className="text-foreground">{rows.length}</span> entries
+          Showing <span className="text-foreground tabular-nums">{rows.length === 0 ? 0 : start + 1}</span> to{" "}
+          <span className="text-foreground tabular-nums">{Math.min(start + pageSize, rows.length)}</span> of{" "}
+          <span className="text-foreground tabular-nums">{rows.length}</span> entries
         </span>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
             <button
-              className="grid size-7 place-items-center rounded border bg-background disabled:opacity-40"
+              className="grid size-7 place-items-center rounded border bg-background transition-[background-color,opacity] duration-150 disabled:opacity-40"
               disabled={current === 1}
               onClick={() => setPage(current - 1)}
             >
@@ -182,7 +182,7 @@ export function DataTable<T>({
               </>
             )}
             <button
-              className="grid size-7 place-items-center rounded border bg-background disabled:opacity-40"
+              className="grid size-7 place-items-center rounded border bg-background transition-[background-color,opacity] duration-150 disabled:opacity-40"
               disabled={current === totalPages}
               onClick={() => setPage(current + 1)}
             >

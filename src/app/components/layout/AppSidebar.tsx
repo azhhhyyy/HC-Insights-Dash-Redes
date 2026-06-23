@@ -41,7 +41,7 @@ function NavMenu({ items }: { items: NavItem[] }) {
                   <SidebarMenuButton tooltip={item.label} isActive={active}>
                     <Icon />
                     <span className="truncate flex-1 text-left">{item.label}</span>
-                    <ChevronRight className="ml-auto shrink-0 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <ChevronRight className="ml-auto shrink-0 transition-[transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">

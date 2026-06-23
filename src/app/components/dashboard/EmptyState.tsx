@@ -25,7 +25,7 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <div className={`rounded-xl border bg-card p-5 shadow-xs ${className}`}>
+    <div className={`rounded-xl border border-transparent bg-card p-5 shadow-sm ${className}`}>
       {(title || action) && (
         <div className="mb-4 flex items-center justify-between gap-2">
           {typeof title === "string" ? (

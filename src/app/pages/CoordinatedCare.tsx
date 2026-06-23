@@ -35,16 +35,22 @@ export default function CoordinatedCare() {
 
   return (
     <Page title="Coordinated Care" chips={coordinatedCareChips}>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 stagger-section mb-4">
         <KpiCard icon={FileText} title="Total # of Claims" value="170" caption="Total claims." />
         <KpiCard icon={DollarSign} title="Total Amount on Claims" value="$35,497.14" caption="Total claims amount." />
         <KpiCard icon={Workflow} title="Total # Coordinated Care" value="101" caption="Unique coordinated care claims" />
         <KpiCard icon={Wallet} title="Total Amount on Coordinated Care" value="$24,296.92" caption="Total plan-paid amount." />
         <KpiCard icon={PiggyBank} title="Total Care Coordination Cost Savings" empty />
       </div>
-      <KpiCard icon={Percent} className="max-w-xs" title="Cost as % of Medicaid" value="546.55%" />
+      <div className="stagger-section mb-6">
+        <KpiCard icon={Percent} className="max-w-xs" title="Cost as % of Medicaid" value="546.55%" />
+      </div>
 
-      <ToggleTabs value={tab} onChange={setTab} options={TABS} className="flex-wrap" />
+      <div className="stagger-section mb-6">
+        <ToggleTabs value={tab} onChange={setTab} options={TABS} className="flex-wrap" />
+      </div>
+
+      <div key={tab} className="animate-fade-in-up">
 
       {tab === "categories" && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -64,9 +70,9 @@ export default function CoordinatedCare() {
             <PieBreakdown data={procedureSubCategories} />
             <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
               {procedureSubCategories.map((p) => (
-                <span key={p.name} className="flex items-center gap-1.5">
-                  <span className="size-2.5 rounded-full" style={{ background: p.color }} />
-                  {p.name}: {money(p.value)}
+                <span key={p.name} className="flex items-center gap-1.5 transition-[opacity,transform] duration-200 hover:translate-x-1 cursor-default">
+                  <span className="size-2.5 rounded-full shrink-0" style={{ background: p.color }} />
+                  {p.name}: <span className="tabular-nums font-medium">{money(p.value)}</span>
                 </span>
               ))}
             </div>
@@ -166,6 +172,7 @@ export default function CoordinatedCare() {
           />
         </Panel>
       )}
+      </div>
     </Page>
   );
 }

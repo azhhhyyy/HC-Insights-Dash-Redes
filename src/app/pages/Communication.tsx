@@ -69,7 +69,7 @@ function HeatTable() {
               {HOURS.map((h, c) => (
                 <TableCell
                   key={h}
-                  className="text-center text-xs"
+                  className="text-center text-xs tabular-nums transition-[background-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-black/10"
                   style={{ backgroundColor: heatCell(grid[r][c]) }}
                 >
                   {grid[r][c] || ""}
@@ -107,7 +107,7 @@ export default function Communication() {
         <FilterDropdown label="Communication Type" options={["All", "Voice", "Message"]} />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 stagger-section mb-6">
         <Panel title="Inbound Voice Call Response Rate Per Day">
           <GroupedBar
             data={inboundRate}
@@ -130,7 +130,7 @@ export default function Communication() {
         </Panel>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 stagger-section mb-6">
         <Panel title="Calls Made by Hour of Day Per Team Member Each Month">
           <HeatTable />
         </Panel>
@@ -139,9 +139,11 @@ export default function Communication() {
         </Panel>
       </div>
 
-      <Panel title="Voice Calls Answered by Hour of Day Per Team Member Per Month">
-        <HeatTable />
-      </Panel>
+      <div className="stagger-section">
+        <Panel title="Voice Calls Answered by Hour of Day Per Team Member Per Month">
+          <HeatTable />
+        </Panel>
+      </div>
     </Page>
   );
 }

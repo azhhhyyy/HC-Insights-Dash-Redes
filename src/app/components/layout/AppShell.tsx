@@ -65,7 +65,7 @@ function TopBar({
         <input
           type="text"
           placeholder="Search patients, claims, reports…"
-          className="h-9 w-full rounded-md border bg-background pl-9 pr-3 text-sm outline-none placeholder:text-slate-400 focus:border-primary/40"
+          className="h-9 w-full rounded-md border bg-background pl-9 pr-3 text-sm outline-none placeholder:text-slate-400 transition-[border-color] duration-150 focus:border-primary/40"
         />
       </div>
 
@@ -110,7 +110,7 @@ function TopBar({
         <Button
           variant="secondary"
           size="sm"
-          className="h-9 gap-2 text-primary hover:bg-primary/10 px-3"
+          className="h-9 gap-2 text-primary hover:bg-primary/10 pl-3 pr-3.5 transition-[background-color] duration-150"
           onClick={() => setIsAiSidebarOpen(!isAiSidebarOpen)}
           title="Toggle AI Sidebar"
         >

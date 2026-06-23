@@ -74,10 +74,10 @@ function MiniTable({
           {rows.map((r) => (
             <TableRow key={r.label}>
               <TableCell className="text-sm">{r.label}</TableCell>
-              <TableCell className="text-sm">{r.responses}</TableCell>
-              <TableCell className={`text-sm ${color(r.avg)}`}>{r.avg}</TableCell>
-              <TableCell className="text-sm text-green-600">{r.satisfied}</TableCell>
-              <TableCell className="text-sm text-destructive">{r.low}</TableCell>
+              <TableCell className="text-sm tabular-nums">{r.responses}</TableCell>
+              <TableCell className={`text-sm tabular-nums ${color(r.avg)}`}>{r.avg}</TableCell>
+              <TableCell className="text-sm tabular-nums text-green-600">{r.satisfied}</TableCell>
+              <TableCell className="text-sm tabular-nums text-destructive">{r.low}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -109,6 +109,7 @@ export default function Survey() {
     >
       <TextTabs value={tab} onChange={setTab} options={TABS} />
 
+      <div key={tab} className="animate-fade-in-up">
       {tab === "recent" && (
         <DataTable columns={recentColumns} rows={surveyRecent} rowKey={(r) => r.id} />
       )}
@@ -139,7 +140,7 @@ export default function Survey() {
 
       {tab === "dashboard" && (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-section mb-6">
             <KpiCard icon={Star} title="Average CSAT Score" value="4.17" caption="out of 5" />
             <KpiCard
               icon={Smile}
@@ -156,7 +157,7 @@ export default function Survey() {
             <KpiCard icon={TriangleAlert} title="Needs Improvement" value="2" caption="Rating ≤ 2" />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 stagger-section mb-6">
             <Panel title="CSAT Distribution">
               <VerticalBar data={csatDistribution} xLabel="Rating" yLabel="Count" />
             </Panel>
@@ -165,7 +166,7 @@ export default function Survey() {
             </Panel>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 stagger-section">
             <div className="space-y-2">
               <h3 className="text-sm text-foreground">Top Physicians</h3>
               <MiniTable
@@ -195,6 +196,7 @@ export default function Survey() {
           </div>
         </>
       )}
+      </div>
     </Page>
   );
 }
