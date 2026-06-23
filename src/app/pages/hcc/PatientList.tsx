@@ -1,0 +1,114 @@
+import { ReactNode } from "react";
+import { Link } from "react-router";
+import { Paperclip, Clock, ExternalLink, Users, HelpCircle, Eye } from "lucide-react";
+import { DataTable, type Column } from "../../components/dashboard/DataTable";
+import { Button } from "../../components/ui/button";
+import { PatientRow, PATIENT_DATA } from "../../data/patients";
+
+const getStatusBadge = (status: PatientRow["status"]) => {
+  switch (status) {
+    case "Open":
+      return <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Open</span>;
+    case "Confirmed":
+      return <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">Confirmed</span>;
+    case "Deferred":
+      return <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">Deferred</span>;
+    case "Rejected":
+      return <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">Rejected</span>;
+    default:
+      return <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">N/A</span>;
+  }
+};
+
+const getClassificationBadge = (cls: string) => {
+  if (cls === "Proactive") {
+    return <span className="inline-flex items-center rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-xs font-medium text-orange-600">Proactive</span>;
+  }
+  return <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-600">Reactive</span>;
+};
+
+const getAwvBadge = (awv: string) => {
+  if (awv === "Completed") {
+    return <span className="inline-flex items-center rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-white">Completed</span>;
+  }
+  return <span className="inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-600">Pending</span>;
+};
+
+import { Page } from "../../components/layout/Page";
+import { hccChips } from "../../data/filters";
+import { useState, useMemo } from "react";
+import { PatientProfileSidebar } from "./PatientProfileSidebar";
+
+export default function HccPatientList() {
+  const [selectedPatient, setSelectedPatient] = useState<PatientRow | null>(null);
+
+  const columns = useMemo<Column<PatientRow>[]>(() => [
+    {
+      key: "name",
+      header: "Patient",
+      cell: (row) => <span className="font-medium text-primary hover:underline cursor-pointer" onClick={() => setSelectedPatient(row)}>{row.name}</span>,
+    },
+    { key: "mrn", header: "MRN", cell: (row) => <span className="text-slate-500">{row.mrn}</span> },
+    { key: "suspectedHcc", header: "Suspected HCC" },
+    { key: "classification", header: "Classification", cell: (row) => getClassificationBadge(row.classification) },
+    { key: "awvStatus", header: "AWV Status", cell: (row) => getAwvBadge(row.awvStatus) },
+    {
+      key: "lastTrigger",
+      header: "Last Trigger",
+      cell: (row) => (
+        <div className="flex items-center gap-1.5 text-slate-600">
+          {row.lastTrigger.type === "paperclip" ? <Paperclip className="size-3.5" /> : <Clock className="size-3.5" />}
+          {row.lastTrigger.date}
+        </div>
+      ),
+    },
+    { key: "status", header: "Status", cell: (row) => getStatusBadge(row.status) },
+    {
+      key: "lastReviewed",
+      header: "Last Reviewed",
+      cell: (row) => {
+        if (!row.lastReviewed) return <span className="text-slate-400">N/A</span>;
+        return (
+          <div className="flex flex-col text-[13px]">
+            <span className="font-medium text-slate-700">{row.lastReviewed.doctor}</span>
+            <span className="text-slate-400">{row.lastReviewed.date}</span>
+          </div>
+        );
+      },
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      cell: (row) => (
+        <Button 
+          variant="outline"
+          size="sm"
+          onClick={() => setSelectedPatient(row)}
+          className="h-8 gap-1.5 text-xs text-slate-600"
+        >
+          <Eye className="size-3.5" />
+          View Details
+        </Button>
+      ),
+    },
+  ], []);
+
+  return (
+    <Page title="Patient List" crumbs={[{ label: "HCC Insights" }]} chips={hccChips}>
+      <div className="space-y-4">
+        <DataTable
+          columns={columns}
+          rows={PATIENT_DATA}
+          rowKey={(row) => row.id}
+          pageSize={10}
+        />
+      </div>
+
+      <PatientProfileSidebar 
+        open={selectedPatient !== null} 
+        onOpenChange={(open) => !open && setSelectedPatient(null)} 
+        patient={selectedPatient} 
+      />
+    </Page>
+  );
+}

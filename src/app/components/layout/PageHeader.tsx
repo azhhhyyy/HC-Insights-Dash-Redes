@@ -1,0 +1,90 @@
+import type { ReactNode } from "react";
+import { Link } from "react-router";
+import { Download, Share2, SlidersHorizontal } from "lucide-react";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+
+export type Crumb = { label: string; to?: string };
+
+type PageHeaderProps = {
+  title: string;
+  subtitle?: string;
+  crumbs?: Crumb[];
+  /** Optional control rendered next to the title (toggle group / tabs). */
+  leading?: ReactNode;
+  showIconActions?: boolean;
+  showGenerateReport?: boolean;
+  showFilters?: boolean;
+  onFiltersClick?: () => void;
+};
+
+export function PageHeader({
+  title,
+  subtitle,
+  crumbs,
+  leading,
+  showIconActions = true,
+  showGenerateReport = true,
+  showFilters = true,
+  onFiltersClick,
+}: PageHeaderProps) {
+  return (
+    <div className="flex min-h-16 flex-wrap items-center justify-between gap-3 px-6 py-3 border-b border-border/60">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        {crumbs && crumbs.length > 0 ? (
+          <div className="flex flex-col gap-0.5">
+            <nav className="flex items-center gap-1.5 text-xs">
+              {crumbs.map((c) => (
+                <span key={c.label} className="flex items-center gap-1.5">
+                  {c.to ? (
+                    <Link to={c.to} className="text-slate-400 hover:text-primary">
+                      {c.label}
+                    </Link>
+                  ) : (
+                    <span className="text-slate-400">{c.label}</span>
+                  )}
+                  <span className="text-border">/</span>
+                </span>
+              ))}
+              <span className="text-slate-400">{title}</span>
+            </nav>
+            <h2 className="text-foreground" style={{ fontSize: "1.4rem", lineHeight: 1.2 }}>
+              {title}
+            </h2>
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            <h2 className="text-foreground" style={{ fontSize: "1.4rem", lineHeight: 1.2 }}>
+              {title}
+            </h2>
+            {subtitle && (
+              <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>
+            )}
+          </div>
+        )}
+        {leading}
+      </div>
+
+      <div className="flex items-center gap-2">
+        {showIconActions && (
+          <>
+            <Button variant="ghost" size="icon" className="size-8 text-muted-foreground">
+              <Share2 className="size-4" />
+            </Button>
+          </>
+        )}
+        {showGenerateReport && (
+          <div className="relative">
+            <Button variant="outline" size="sm" className="gap-2">
+              <Download className="size-4" />
+              Generate Report
+            </Button>
+            <Badge className="absolute -right-2 -top-2 h-4 bg-green-600 px-1 text-[9px] text-white">
+              NEW
+            </Badge>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
