@@ -24,7 +24,6 @@ import {
 import { Page } from "../components/layout/Page";
 import { Button } from "../components/ui/button";
 import { ChartTooltip } from "../components/dashboard/ChartTooltip";
-import { CHART_DURATION, CHART_EASING } from "../components/dashboard/charts";
 import { cn } from "../lib/utils";
 import {
   Dialog,
@@ -208,8 +207,6 @@ function KpiSparklineCard({
               fillOpacity={1} 
               fill={`url(#grad-${title.replace(/\s+/g, '-')})`} 
               activeDot={{ r: 5, fill: color, strokeWidth: 0 }}
-              animationDuration={CHART_DURATION}
-              animationEasing={CHART_EASING}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -408,8 +405,6 @@ export default function Home() {
                     strokeWidth={2.5} 
                     dot={false} 
                     activeDot={{ r: 5, strokeWidth: 2, stroke: "var(--primary)", fill: "var(--background)" }} 
-                    animationDuration={CHART_DURATION}
-                    animationEasing={CHART_EASING}
                   />
                   <Line 
                     type="monotone" 
@@ -418,8 +413,6 @@ export default function Home() {
                     strokeWidth={2.5} 
                     dot={false} 
                     activeDot={{ r: 5, strokeWidth: 2, stroke: "#3b82f6", fill: "var(--background)" }} 
-                    animationDuration={CHART_DURATION}
-                    animationEasing={CHART_EASING}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -487,8 +480,6 @@ export default function Home() {
                     fillOpacity={1} 
                     fill="url(#grad-high)" 
                     activeDot={{ r: 5, strokeWidth: 2, stroke: "#ef4444", fill: "var(--background)" }} 
-                    animationDuration={CHART_DURATION}
-                    animationEasing={CHART_EASING}
                   />
                   <Area 
                     type="monotone" 
@@ -498,8 +489,6 @@ export default function Home() {
                     fillOpacity={1} 
                     fill="url(#grad-atRisk)" 
                     activeDot={{ r: 5, strokeWidth: 2, stroke: "#eab308", fill: "var(--background)" }} 
-                    animationDuration={CHART_DURATION}
-                    animationEasing={CHART_EASING}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -549,7 +538,7 @@ export default function Home() {
                     content={<ChartTooltip valueFormatter={(v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v)} />}
                     cursor={{ fill: 'var(--muted)', opacity: 0.15 }}
                   />
-                  <Bar dataKey="value" radius={[0, 6, 6, 0]} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
+                  <Bar dataKey="value" radius={[0, 6, 6, 0]}>
                     <Cell fill="#3b82f6" />
                     <Cell fill="#f5a623" />
                     <Cell fill="#22c55e" />
@@ -661,7 +650,7 @@ export default function Home() {
                       <CartesianGrid vertical={false} horizontal={true} stroke="var(--border)" strokeDasharray="3 3" opacity={0.3} />
                       <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
                       <YAxis hide />
-                      <Line type="monotone" dataKey="gaps" stroke="var(--primary)" strokeWidth={2} dot={{ r: 3 }} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
+                      <Line type="monotone" dataKey="gaps" stroke="var(--primary)" strokeWidth={2} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>

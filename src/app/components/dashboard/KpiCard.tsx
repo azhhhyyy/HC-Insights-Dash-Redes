@@ -12,6 +12,7 @@ import { cn } from "../ui/utils";
 export type KpiSub = { value: string; label: string; className?: string; tooltip?: string };
 
 type KpiCardProps = {
+  id?: string;
   title: string;
   value?: ReactNode;
   /** Small caption beneath the primary value. */
@@ -29,6 +30,7 @@ type KpiCardProps = {
 };
 
 export function KpiCard({
+  id,
   title,
   value,
   caption,
@@ -43,6 +45,7 @@ export function KpiCard({
   const interactive = Boolean(onClick);
   return (
     <Card
+      id={id || "tour-step-15"}
       onClick={onClick}
       role={interactive ? "button" : undefined}
       tabIndex={interactive ? 0 : undefined}

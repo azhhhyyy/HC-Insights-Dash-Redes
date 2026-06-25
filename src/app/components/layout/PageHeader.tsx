@@ -66,6 +66,12 @@ export function PageHeader({
       </div>
 
       <div className="flex items-center gap-2">
+        {showFilters && (
+          <Button id="tour-step-14" variant="outline" size="sm" className="gap-2" onClick={onFiltersClick}>
+            <SlidersHorizontal className="size-3.5 text-muted-foreground" />
+            Filters
+          </Button>
+        )}
         {showIconActions && (
           <>
             <Button variant="ghost" size="icon" className="size-8 text-muted-foreground">
@@ -74,7 +80,7 @@ export function PageHeader({
           </>
         )}
         {showGenerateReport && (
-          <div className="relative">
+          <div id="tour-step-13" className="relative">
             <Button variant="outline" size="sm" className="gap-2 pl-4 pr-3.5">
               <Download className="size-4" />
               Generate Report

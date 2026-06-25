@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Toolti
 import { Button } from "../../components/ui/button";
 import { usePageLoading } from "../../hooks/usePageLoading";
 import { KpiCardSkeleton, ChartSkeleton, TableSkeleton } from "../../components/dashboard/SkeletonPrimitives";
-import { CHART_DURATION, CHART_EASING } from "../../components/dashboard/charts";
+
 
 const mockLabData = [
   { month: "Dec 24", belowRange: 0, withinRange: 45, aboveRange: 220 },
@@ -87,9 +87,9 @@ export default function LabTrends() {
                     content={<CustomBarTooltip />}
                   />
                   <Legend iconType="square" wrapperStyle={{ fontSize: 12, color: "#64748b", paddingTop: "20px" }} />
-                  <Bar dataKey="belowRange" name="Below Range" stackId="a" fill="#f59e0b" barSize={20} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
-                  <Bar dataKey="withinRange" name="Within Range" stackId="a" fill="#10b981" barSize={20} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
-                  <Bar dataKey="aboveRange" name="Above Range" stackId="a" fill="#e32168" barSize={20} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
+                  <Bar dataKey="belowRange" name="Below Range" stackId="a" fill="#f59e0b" barSize={20} />
+                  <Bar dataKey="withinRange" name="Within Range" stackId="a" fill="#10b981" barSize={20} />
+                  <Bar dataKey="aboveRange" name="Above Range" stackId="a" fill="#e32168" barSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

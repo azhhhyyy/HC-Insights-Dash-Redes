@@ -18,7 +18,8 @@ import {
   Accessibility,
   Moon,
   Type,
-  Contrast
+  Contrast,
+  HelpCircle
 } from "lucide-react";
 import { NAV_ITEMS, HCC_NAV_ITEMS, ACO_NAV_ITEMS, OUTCOMES_NAV_ITEMS, SYSTEM_NAV_ITEMS, type NavItem } from "../../lib/navigation";
 import {
@@ -39,6 +40,7 @@ import {
 } from "../ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Switch } from "../ui/switch";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -55,6 +57,7 @@ import {
 import { cn } from "../ui/utils";
 import { useState } from "react";
 import { useThemeContext } from "../../contexts/ThemeContext";
+import { useOnboardingTour } from "../../contexts/OnboardingTourContext";
 
 const THEME_COLORS = [
   { id: "pink", value: "#e32168" },
@@ -82,7 +85,7 @@ function NavMenu({ items }: { items: NavItem[] }) {
               defaultOpen={active}
               className="group/collapsible"
             >
-              <SidebarMenuItem>
+              <SidebarMenuItem id={item.tourId}>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuButton tooltip={item.label} isActive={active}>
                     <Icon />
@@ -112,7 +115,7 @@ function NavMenu({ items }: { items: NavItem[] }) {
         }
 
         return (
-          <SidebarMenuItem key={item.key}>
+          <SidebarMenuItem key={item.key} id={item.tourId}>
             <SidebarMenuButton asChild isActive={active} tooltip={item.label}>
               <NavLink to={item.path}>
                 <Icon />
@@ -127,6 +130,7 @@ function NavMenu({ items }: { items: NavItem[] }) {
 }
 
 export function AppSidebar() {
+  const { startTour } = useOnboardingTour();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { pathname } = useLocation();
@@ -175,7 +179,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
+        <SidebarGroup id="tour-step-1">
           <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
           <NavMenu items={navItems} />
         </SidebarGroup>
@@ -189,9 +193,9 @@ export function AppSidebar() {
       <SidebarFooter className="border-t border-sidebar-border">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Send feedback">
-              <MessageSquarePlus />
-              <span>Send feedback</span>
+            <SidebarMenuButton id="tour-step-16" tooltip="Get Help">
+              <HelpCircle />
+              <span>Get Help</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
@@ -286,27 +290,27 @@ export function AppSidebar() {
                   </DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
                     <DropdownMenuSubContent className="w-[200px]">
-                      <DropdownMenuCheckboxItem 
-                        checked={isDarkMode} 
-                        onCheckedChange={setIsDarkMode}
-                      >
-                        <Moon className="mr-2" />
-                        Dark Mode
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem 
-                        checked={isHighContrast} 
-                        onCheckedChange={setIsHighContrast}
-                      >
-                        <Contrast className="mr-2" />
-                        High Contrast
-                      </DropdownMenuCheckboxItem>
-                      <DropdownMenuCheckboxItem 
-                        checked={isLargeText} 
-                        onCheckedChange={setIsLargeText}
-                      >
-                        <Type className="mr-2" />
-                        Large Text
-                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuItem className="flex items-center justify-between" onSelect={(e) => e.preventDefault()}>
+                        <div className="flex items-center">
+                          <Moon className="mr-2 size-4" />
+                          <span>Dark Mode</span>
+                        </div>
+                        <Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex items-center justify-between" onSelect={(e) => e.preventDefault()}>
+                        <div className="flex items-center">
+                          <Contrast className="mr-2 size-4" />
+                          <span>High Contrast</span>
+                        </div>
+                        <Switch checked={isHighContrast} onCheckedChange={setIsHighContrast} />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex items-center justify-between" onSelect={(e) => e.preventDefault()}>
+                        <div className="flex items-center">
+                          <Type className="mr-2 size-4" />
+                          <span>Large Text</span>
+                        </div>
+                        <Switch checked={isLargeText} onCheckedChange={setIsLargeText} />
+                      </DropdownMenuItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuPortal>
                 </DropdownMenuSub>
@@ -319,7 +323,7 @@ export function AppSidebar() {
                   Templates
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={startTour} className="cursor-pointer">
                   <BookOpen className="mr-2" />
                   Guide
                 </DropdownMenuItem>

@@ -5,7 +5,7 @@ import { Users, ShieldAlert, AlertCircle, CalendarClock, Pill, Activity, LayoutD
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from "recharts";
 import { usePageLoading } from "../../hooks/usePageLoading";
 import { KpiCardSkeleton, PieChartSkeleton } from "../../components/dashboard/SkeletonPrimitives";
-import { CHART_DURATION, CHART_EASING } from "../../components/dashboard/charts";
+
 
 const kpiData = [
   { id: "total-patients", title: "Total Patients", value: "1,550", caption: "Actively monitored patients", icon: Users },
@@ -98,8 +98,6 @@ export default function DashboardOverview() {
                     dataKey="value"
                     label={({ percent }) => percent > 0.03 ? `${(percent * 100).toFixed(0)}%` : ''}
                     labelLine={false}
-                    animationDuration={CHART_DURATION}
-                    animationEasing={CHART_EASING}
                   >
                     {pieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />

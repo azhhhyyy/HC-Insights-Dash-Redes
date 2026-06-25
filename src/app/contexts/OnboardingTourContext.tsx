@@ -122,7 +122,7 @@ const TOUR_STEPS: TourStep[] = [
     targetId: "tour-step-16",
     title: "Help Desk",
     badge: "Support",
-    content: `Step 1: Tap the ? icon in the top-right corner of your dashboard.\n\nStep 2: Explore articles, integration guides, dashboard overviews, FAQs, and user access instructions.\n\nStep 3: Use search or browse categories to quickly find the exact information you need.`
+    content: `Step 1: Click "Get Help" in the sidebar.\n\nStep 2: Explore articles, integration guides, dashboard overviews, FAQs, and user access instructions.\n\nStep 3: Use search or browse categories to quickly find the exact information you need.`
   },
   {
     id: "step-17",
@@ -316,12 +316,12 @@ export function OnboardingTourProvider({ children }: { children: React.ReactNode
               {currentStep.content.split('\n\n').map((paragraph, idx) => {
                 if (paragraph.startsWith("Important Disclaimer")) {
                   return (
-                    <div key={idx} className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs text-amber-200 flex flex-col gap-1.5">
-                      <div className="flex items-center gap-1.5 font-bold text-amber-400">
-                        <ShieldAlert className="size-4 shrink-0" />
+                    <div key={idx} className="rounded-xl border border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-950/20 p-3.5 text-xs flex flex-col gap-1.5 shadow-sm">
+                      <div className="flex items-center gap-1.5 font-bold text-red-800 dark:text-red-400">
+                        <ShieldAlert className="size-4 shrink-0 text-red-600 dark:text-red-400" />
                         <span>Important Disclaimer</span>
                       </div>
-                      <p className="text-amber-200/90 leading-normal">{paragraph.replace("Important Disclaimer:", "").replace("Important Disclaimer", "")}</p>
+                      <p className="text-red-750 dark:text-red-300/90 font-medium leading-normal">{paragraph.replace("Important Disclaimer:", "").replace("Important Disclaimer", "")}</p>
                     </div>
                   );
                 }

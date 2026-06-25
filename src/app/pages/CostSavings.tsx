@@ -6,7 +6,7 @@ import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip as RechartsTooltip,
 import { useState } from "react";
 import { ChartTooltip } from "../components/dashboard/ChartTooltip";
 import { DataTable, type Column } from "../components/dashboard/DataTable";
-import { CHART_DURATION, CHART_EASING } from "../components/dashboard/charts";
+
 import { usePageLoading } from "../hooks/usePageLoading";
 import { KpiCardSkeleton, ChartSkeleton, PieChartSkeleton, TableSkeleton } from "../components/dashboard/SkeletonPrimitives";
 
@@ -120,6 +120,8 @@ const CATEGORY_PATIENTS: Record<string, any[]> = {
   ],
 };
 
+const ALL_PATIENTS = Object.values(CATEGORY_PATIENTS).flat();
+
 export default function CostSavings() {
   const isLoading = usePageLoading();
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
@@ -223,7 +225,7 @@ export default function CostSavings() {
                   content={<ChartTooltip valueFormatter={(v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v)} />}
                   cursor={{ fill: 'var(--muted)', opacity: 0.3 }}
                 />
-                <Bar dataKey="value" radius={[6, 6, 0, 0]} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
+                <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                   {overviewData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={barColors[index]} />
                   ))}
@@ -306,8 +308,6 @@ export default function CostSavings() {
                   onMouseEnter={(_, index) => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(undefined)}
                   onClick={(_, index) => setSelectedCategory(selectedCategory === pieData[index].name ? undefined : pieData[index].name)}
-                  animationDuration={CHART_DURATION}
-                  animationEasing={CHART_EASING}
                   className="cursor-pointer"
                 >
                   {pieData.map((entry, index) => (
@@ -325,25 +325,31 @@ export default function CostSavings() {
 
       {/* Bottom Section (Data Table) */}
       <div className="rounded-2xl border border-transparent flex flex-col min-h-[200px] stagger-section">
-        {selectedCategory && (
-          <div className="mb-4 flex items-center justify-between rounded-xl bg-muted/30 px-4 py-2.5 border border-border">
-            <div className="flex items-center gap-2">
-              <span className="size-2.5 rounded-full" style={{ backgroundColor: pieData.find(p => p.name === selectedCategory)?.color }} />
-              <span className="text-xs font-semibold text-foreground">Showing patient details for: <span className="text-primary font-bold">{selectedCategory}</span></span>
-            </div>
+        <div className="mb-4 flex items-center justify-between rounded-xl bg-muted/30 px-4 py-2.5 border border-border">
+          <div className="flex items-center gap-2">
+            <span className="size-2.5 rounded-full" style={{ backgroundColor: selectedCategory ? pieData.find(p => p.name === selectedCategory)?.color : "var(--primary)" }} />
+            <span className="text-xs font-semibold text-foreground">
+              {selectedCategory ? (
+                <>Showing patient details for: <span className="text-primary font-bold">{selectedCategory}</span></>
+              ) : (
+                <>Showing <span className="text-primary font-bold">All Service Categories</span> ({ALL_PATIENTS.length} Patients)</>
+              )}
+            </span>
+          </div>
+          {selectedCategory && (
             <button
               onClick={() => setSelectedCategory(undefined)}
               className="text-xs font-medium text-muted-foreground hover:text-foreground underline cursor-pointer"
             >
               Clear filter
             </button>
-          </div>
-        )}
+          )}
+        </div>
         <DataTable
           columns={tableColumns}
-          rows={selectedCategory ? CATEGORY_PATIENTS[selectedCategory] || [] : []}
+          rows={selectedCategory ? CATEGORY_PATIENTS[selectedCategory] || [] : ALL_PATIENTS}
           rowKey={(_, i) => String(i)}
-          emptyMessage="Click any service category or legend above to show patient details"
+          emptyMessage="No patient records found"
         />
       </div>
     </Page>

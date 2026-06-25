@@ -30,19 +30,19 @@ export function AiInsightsTab() {
         </Card>
 
         {/* Anomaly Detection */}
-        <Card className="shadow-none border-destructive/20 bg-destructive/5">
+        <Card className="shadow-sm border-red-200 dark:border-red-900/40 bg-red-50/80 dark:bg-red-950/20">
           <CardHeader className="p-4 pb-2">
-            <CardTitle className="text-sm flex items-center gap-2 text-destructive">
-              <AlertCircle className="size-4" />
+            <CardTitle className="text-sm flex items-center gap-2 font-bold text-red-800 dark:text-red-400">
+              <AlertCircle className="size-4 text-red-600 dark:text-red-400 shrink-0" />
               Anomaly Alert
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0 text-sm">
-            <p className="text-destructive-foreground mb-3 leading-relaxed">
-              <strong className="font-semibold">Spike Detected:</strong> 20% increase in After-Hours Encounters this week compared to last week.
+            <p className="text-red-900 dark:text-red-200 mb-3 leading-relaxed">
+              <strong className="font-semibold text-red-950 dark:text-red-100">Spike Detected:</strong> 20% increase in After-Hours Encounters this week compared to last week.
             </p>
-            <Button size="sm" variant="outline" className="w-full text-xs font-medium border-destructive/30 hover:bg-destructive/10 text-destructive shadow-sm">
-              <TrendingUp className="size-3.5 mr-1.5" />
+            <Button size="sm" variant="outline" className="w-full text-xs font-medium border-red-300 dark:border-red-800 bg-background hover:bg-red-100 dark:hover:bg-red-900/40 text-red-700 dark:text-red-300 shadow-sm transition-colors cursor-pointer">
+              <TrendingUp className="size-3.5 mr-1.5 shrink-0" />
               Analyze Root Cause
             </Button>
           </CardContent>

@@ -25,8 +25,7 @@ export const CHART_COLORS = [
   "var(--chart-5)",
 ];
 
-export const CHART_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
-export const CHART_DURATION = 1000;
+
 
 const axisStyle = { fontSize: 11, fill: "var(--muted-foreground)" };
 const tooltipStyle = {
@@ -96,7 +95,7 @@ export function HorizontalBar({
           label={yLabel ? { value: yLabel, angle: -90, position: "insideLeft", style: axisStyle } : undefined}
         />
         <Tooltip contentStyle={tooltipStyle} />
-        <Bar dataKey="value" fill={color} radius={[0, 4, 4, 0]} barSize={18} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
+        <Bar dataKey="value" fill={color} radius={[0, 4, 4, 0]} barSize={18}>
           <LabelList
             dataKey="value"
             position="right"
@@ -128,7 +127,7 @@ export function GroupedBar({
         <Tooltip contentStyle={tooltipStyle} />
         <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: 24, fontSize: 12 }} />
         {series.map((s) => (
-          <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} radius={[3, 3, 0, 0]} barSize={28} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
+          <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} radius={[3, 3, 0, 0]} barSize={28}>
             <LabelList dataKey={s.key} position="top" style={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
           </Bar>
         ))}
@@ -169,7 +168,7 @@ export function VerticalBar({
           label={yLabel ? { value: yLabel, angle: -90, position: "insideLeft", style: axisStyle } : undefined}
         />
         <Tooltip contentStyle={tooltipStyle} />
-        <Bar dataKey="value" radius={[3, 3, 0, 0]} barSize={36} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
+        <Bar dataKey="value" radius={[3, 3, 0, 0]} barSize={36}>
           {data.map((d, i) => (
             <Cell key={i} fill={d.color ?? colors?.[i % colors.length] ?? "var(--chart-1)"} />
           ))}
@@ -236,8 +235,6 @@ export function AreaTrend({
             stroke={s.color}
             strokeWidth={2}
             fill={`url(#grad-${s.key})`}
-            animationDuration={CHART_DURATION}
-            animationEasing={CHART_EASING}
           >
             <LabelList dataKey={s.key} position="top" style={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
           </Area>
@@ -279,7 +276,7 @@ export function LineTrend({
           label={yLabel ? { value: yLabel, angle: -90, position: "insideLeft", style: axisStyle } : undefined}
         />
         <Tooltip contentStyle={tooltipStyle} />
-        <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} dot={true} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
+        <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} dot={true}>
           <LabelList dataKey="value" position="top" style={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
         </Line>
       </LineChart>
@@ -313,8 +310,6 @@ export function PieBreakdown({
           stroke="none"
           label={({ percent }) => percent > 0.03 ? `${(percent * 100).toFixed(0)}%` : ''}
           labelLine={false}
-          animationDuration={CHART_DURATION}
-          animationEasing={CHART_EASING}
         >
           {data.map((d, i) => (
             <Cell key={i} fill={d.color ?? CHART_COLORS[i % CHART_COLORS.length]} stroke="none" />
@@ -342,7 +337,7 @@ export function Sparkline({
     <div style={{ width, height }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} margin={{ top: 4, right: 2, bottom: 4, left: 2 }}>
-          <Line type="monotone" dataKey="v" stroke={color} strokeWidth={1.5} dot={false} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
+          <Line type="monotone" dataKey="v" stroke={color} strokeWidth={1.5} dot={false} />
         </LineChart>
       </ResponsiveContainer>
     </div>

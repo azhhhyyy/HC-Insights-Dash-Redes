@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router";
-import { ChevronDown, HelpCircle, Search, PanelRight } from "lucide-react";
+import { ChevronDown, Search, PanelRight } from "lucide-react";
 import { AppSidebar } from "./AppSidebar";
 import { RightAiSidebar } from "../ai/RightAiSidebar";
+import { OnboardingTourProvider } from "../../contexts/OnboardingTourContext";
 import {
   SidebarInset,
   SidebarProvider,
@@ -71,7 +72,7 @@ function TopBar({
 
       <div className="ml-auto flex items-center gap-2">
         <Popover>
-          <PopoverTrigger className="grid size-9 place-items-center rounded-md text-primary outline-none hover:bg-accent transition-colors">
+          <PopoverTrigger id="tour-step-12" className="grid size-9 place-items-center rounded-md text-primary outline-none hover:bg-accent transition-colors">
             <LayoutGrid className="size-5" />
           </PopoverTrigger>
           <PopoverContent align="end" className="w-[320px] rounded-xl border bg-card p-4 shadow-lg" sideOffset={8}>
@@ -108,11 +109,12 @@ function TopBar({
         </Popover>
 
         <Button
+          id="tour-step-17"
           variant="secondary"
           size="sm"
           className="h-9 gap-2 text-primary hover:bg-primary/10 pl-3 pr-3.5 transition-[background-color] duration-150"
           onClick={() => setIsAiSidebarOpen(!isAiSidebarOpen)}
-          title="Toggle AI Sidebar"
+          title="Start Chat Bot Support"
         >
           <Sparkles className="size-4" />
           <span className="font-medium">Ask AI</span>
@@ -167,18 +169,20 @@ export function AppShell() {
   const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(false);
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset className="bg-muted/40 flex-row p-0 overflow-hidden relative">
-        <div className="flex-1 flex flex-col min-w-0 h-screen">
-          <TopBar isAiSidebarOpen={isAiSidebarOpen} setIsAiSidebarOpen={setIsAiSidebarOpen} />
-          <main className="flex-1 min-w-0 flex flex-col overflow-auto">
-            <Outlet />
-          </main>
-          <Footer />
-        </div>
-        <RightAiSidebar isOpen={isAiSidebarOpen} setIsOpen={setIsAiSidebarOpen} />
-      </SidebarInset>
-    </SidebarProvider>
+    <OnboardingTourProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset className="bg-muted/40 flex-row p-0 overflow-hidden relative">
+          <div className="flex-1 flex flex-col min-w-0 h-screen">
+            <TopBar isAiSidebarOpen={isAiSidebarOpen} setIsAiSidebarOpen={setIsAiSidebarOpen} />
+            <main className="flex-1 min-w-0 flex flex-col overflow-auto">
+              <Outlet />
+            </main>
+            <Footer />
+          </div>
+          <RightAiSidebar isOpen={isAiSidebarOpen} setIsOpen={setIsAiSidebarOpen} />
+        </SidebarInset>
+      </SidebarProvider>
+    </OnboardingTourProvider>
   );
 }
