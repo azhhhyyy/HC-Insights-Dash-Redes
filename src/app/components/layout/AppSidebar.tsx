@@ -14,7 +14,11 @@ import {
   Info, 
   LogOut,
   Check,
-  Pipette
+  Pipette,
+  Accessibility,
+  Moon,
+  Type,
+  Contrast
 } from "lucide-react";
 import { NAV_ITEMS, HCC_NAV_ITEMS, ACO_NAV_ITEMS, OUTCOMES_NAV_ITEMS, SYSTEM_NAV_ITEMS, type NavItem } from "../../lib/navigation";
 import {
@@ -45,10 +49,12 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-  DropdownMenuPortal
+  DropdownMenuPortal,
+  DropdownMenuCheckboxItem
 } from "../ui/dropdown-menu";
 import { cn } from "../ui/utils";
 import { useState } from "react";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 const THEME_COLORS = [
   { id: "pink", value: "#e32168" },
@@ -129,70 +135,12 @@ export function AppSidebar() {
   const isAco = pathname.startsWith("/aco");
   const isOutcomes = pathname.startsWith("/outcomes");
 
-  const [primaryColor, setPrimaryColor] = useState("#e32168");
-
-  const hexToRGB = (hex: string) => {
-    let r = parseInt(hex.slice(1, 3), 16),
-        g = parseInt(hex.slice(3, 5), 16),
-        b = parseInt(hex.slice(5, 7), 16);
-    return { r, g, b };
-  };
-
-  const mixWithWhite = (hex: string, percent: number) => {
-    let { r, g, b } = hexToRGB(hex);
-    r = Math.round(r + (255 - r) * (percent / 100));
-    g = Math.round(g + (255 - g) * (percent / 100));
-    b = Math.round(b + (255 - b) * (percent / 100));
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-  };
-
-  const mixWithBlack = (hex: string, percent: number) => {
-    let { r, g, b } = hexToRGB(hex);
-    r = Math.round(r * (1 - percent / 100));
-    g = Math.round(g * (1 - percent / 100));
-    b = Math.round(b * (1 - percent / 100));
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-  };
-
-  const getContrastText = (hex: string) => {
-    let { r, g, b } = hexToRGB(hex);
-    let yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-    return yiq >= 128 ? '#000000' : '#ffffff';
-  };
-
-  const handleColorChange = (color: string) => {
-    setPrimaryColor(color);
-    
-    const root = document.documentElement.style;
-    const fg = getContrastText(color);
-    const veryLight = mixWithWhite(color, 90);
-    const light = mixWithWhite(color, 20);
-    const dark1 = mixWithBlack(color, 15);
-    const dark2 = mixWithBlack(color, 30);
-    const dark3 = mixWithBlack(color, 50);
-
-    // Core Colors
-    root.setProperty("--primary", color);
-    root.setProperty("--primary-foreground", fg);
-    root.setProperty("--secondary", veryLight);
-    root.setProperty("--secondary-foreground", dark1);
-    root.setProperty("--accent", veryLight);
-    root.setProperty("--accent-foreground", dark3);
-    root.setProperty("--ring", light);
-    
-    // Sidebar Colors
-    root.setProperty("--sidebar-primary", color);
-    root.setProperty("--sidebar-primary-foreground", fg);
-    root.setProperty("--sidebar-accent", veryLight);
-    root.setProperty("--sidebar-accent-foreground", dark3);
-
-    // Chart Palette (Monochromatic scale)
-    root.setProperty("--chart-1", light);
-    root.setProperty("--chart-2", color);
-    root.setProperty("--chart-3", dark1);
-    root.setProperty("--chart-4", dark2);
-    root.setProperty("--chart-5", dark3);
-  };
+  const { 
+    primaryColor, setPrimaryColor, 
+    isDarkMode, setIsDarkMode, 
+    isHighContrast, setIsHighContrast, 
+    isLargeText, setIsLargeText 
+  } = useThemeContext();
 
   let navItems = NAV_ITEMS;
   let groupLabel = "Analytics";
@@ -312,7 +260,7 @@ export function AppSidebar() {
                               primaryColor === color.value ? "ring-2 ring-slate-200 ring-offset-1" : "hover:scale-110"
                             )}
                             style={{ backgroundColor: color.value }}
-                            onClick={() => handleColorChange(color.value)}
+                            onClick={() => setPrimaryColor(color.value)}
                           >
                             {primaryColor === color.value && <Check className="size-5 text-white" strokeWidth={3} />}
                           </button>
@@ -324,10 +272,41 @@ export function AppSidebar() {
                             type="color" 
                             className="absolute inset-[-10px] opacity-0 cursor-pointer w-[200%] h-[200%]"
                             value={primaryColor}
-                            onChange={(e) => handleColorChange(e.target.value)}
+                            onChange={(e) => setPrimaryColor(e.target.value)}
                           />
                         </div>
                       </div>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <Accessibility className="mr-2" />
+                    Accessibility
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent className="w-[200px]">
+                      <DropdownMenuCheckboxItem 
+                        checked={isDarkMode} 
+                        onCheckedChange={setIsDarkMode}
+                      >
+                        <Moon className="mr-2" />
+                        Dark Mode
+                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem 
+                        checked={isHighContrast} 
+                        onCheckedChange={setIsHighContrast}
+                      >
+                        <Contrast className="mr-2" />
+                        High Contrast
+                      </DropdownMenuCheckboxItem>
+                      <DropdownMenuCheckboxItem 
+                        checked={isLargeText} 
+                        onCheckedChange={setIsLargeText}
+                      >
+                        <Type className="mr-2" />
+                        Large Text
+                      </DropdownMenuCheckboxItem>
                     </DropdownMenuSubContent>
                   </DropdownMenuPortal>
                 </DropdownMenuSub>

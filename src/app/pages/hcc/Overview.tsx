@@ -67,6 +67,7 @@ import { Page } from "../../components/layout/Page";
 import { hccChips } from "../../data/filters";
 import { usePageLoading } from "../../hooks/usePageLoading";
 import { KpiCardSkeleton, ChartSkeleton, PieChartSkeleton } from "../../components/dashboard/SkeletonPrimitives";
+import { CHART_DURATION, CHART_EASING } from "../../components/dashboard/charts";
 
 export default function HccOverview() {
   const isLoading = usePageLoading();
@@ -183,7 +184,7 @@ export default function HccOverview() {
                     cursor={{ fill: "transparent" }}
                     contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                   />
-                  <Bar dataKey="count" fill="#e32168" radius={[4, 4, 0, 0]} barSize={40} />
+                  <Bar dataKey="count" fill="#e32168" radius={[4, 4, 0, 0]} barSize={40} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -228,9 +229,11 @@ export default function HccOverview() {
                     stroke="none"
                     label={({ value }) => `${value}%`}
                     labelLine={false}
+                    animationDuration={CHART_DURATION}
+                    animationEasing={CHART_EASING}
                   >
                     {DEMOGRAPHICS_DATA.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                     ))}
                   </Pie>
                   <RechartsTooltip content={<CustomPieTooltip />} cursor={{ fill: "transparent" }} />

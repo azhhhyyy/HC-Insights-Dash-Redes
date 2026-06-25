@@ -7,6 +7,7 @@ import { Button } from "../../components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
 import { usePageLoading } from "../../hooks/usePageLoading";
 import { KpiCardSkeleton, TableSkeleton } from "../../components/dashboard/SkeletonPrimitives";
+import { CHART_DURATION, CHART_EASING } from "../../components/dashboard/charts";
 
 type ScreeningRow = {
   id: string;
@@ -128,8 +129,8 @@ export default function ScreeningsDue() {
                   content={<CustomBarTooltip />}
                 />
                 <Legend iconType="square" wrapperStyle={{ fontSize: 12, color: "#64748b" }} />
-                <Bar dataKey="overdue" name="Overdue" stackId="a" fill="#10b981" barSize={16} />
-                <Bar dataKey="dueSoon" name="Due Soon" stackId="a" fill="#e32168" barSize={16} />
+                <Bar dataKey="overdue" name="Overdue" stackId="a" fill="#10b981" barSize={16} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
+                <Bar dataKey="dueSoon" name="Due Soon" stackId="a" fill="#e32168" barSize={16} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -25,11 +25,32 @@ export const CHART_COLORS = [
   "var(--chart-5)",
 ];
 
+export const CHART_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
+export const CHART_DURATION = 1000;
+
 const axisStyle = { fontSize: 11, fill: "var(--muted-foreground)" };
 const tooltipStyle = {
   borderRadius: 8,
   border: "1px solid var(--border)",
   fontSize: 12,
+  backgroundColor: "var(--card)",
+  color: "var(--foreground)",
+};
+
+const CustomPieTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0];
+    return (
+      <div className="flex items-center justify-between gap-6 rounded-lg border bg-card px-3 py-2 shadow-md">
+        <div className="flex items-center gap-2">
+          <div className="size-3.5 rounded-[3px]" style={{ backgroundColor: data.payload.fill || data.payload.color }} />
+          <span className="text-[13px] font-medium text-muted-foreground">{data.name}</span>
+        </div>
+        <span className="text-[13px] text-foreground">{data.value}</span>
+      </div>
+    );
+  }
+  return null;
 };
 
 /** Horizontal bar chart (e.g. Top Chronic Conditions, Claims Category). */
@@ -75,7 +96,7 @@ export function HorizontalBar({
           label={yLabel ? { value: yLabel, angle: -90, position: "insideLeft", style: axisStyle } : undefined}
         />
         <Tooltip contentStyle={tooltipStyle} />
-        <Bar dataKey="value" fill={color} radius={[0, 4, 4, 0]} barSize={18}>
+        <Bar dataKey="value" fill={color} radius={[0, 4, 4, 0]} barSize={18} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
           <LabelList
             dataKey="value"
             position="right"
@@ -100,14 +121,16 @@ export function GroupedBar({
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={data} margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
+      <BarChart data={data} margin={{ top: 24, right: 16, bottom: 48, left: 0 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
         <XAxis dataKey="name" tick={axisStyle} tickLine={false} axisLine={false} />
         <YAxis tick={axisStyle} tickLine={false} axisLine={false} />
         <Tooltip contentStyle={tooltipStyle} />
-        <Legend wrapperStyle={{ fontSize: 12 }} />
+        <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: 24, fontSize: 12 }} />
         {series.map((s) => (
-          <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} radius={[3, 3, 0, 0]} barSize={28} />
+          <Bar key={s.key} dataKey={s.key} name={s.name} fill={s.color} radius={[3, 3, 0, 0]} barSize={28} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
+            <LabelList dataKey={s.key} position="top" style={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+          </Bar>
         ))}
       </BarChart>
     </ResponsiveContainer>
@@ -130,14 +153,14 @@ export function VerticalBar({
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={data} margin={{ top: 8, right: 16, bottom: 24, left: 8 }}>
+      <BarChart data={data} margin={{ top: 24, right: 16, bottom: 24, left: 8 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
         <XAxis
           dataKey="name"
           tick={axisStyle}
           tickLine={false}
           axisLine={false}
-          label={xLabel ? { value: xLabel, position: "bottom", style: axisStyle } : undefined}
+          label={xLabel ? { value: xLabel, position: "bottom", style: axisStyle, offset: 10 } : undefined}
         />
         <YAxis
           tick={axisStyle}
@@ -146,10 +169,11 @@ export function VerticalBar({
           label={yLabel ? { value: yLabel, angle: -90, position: "insideLeft", style: axisStyle } : undefined}
         />
         <Tooltip contentStyle={tooltipStyle} />
-        <Bar dataKey="value" radius={[3, 3, 0, 0]} barSize={36}>
+        <Bar dataKey="value" radius={[3, 3, 0, 0]} barSize={36} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
           {data.map((d, i) => (
             <Cell key={i} fill={d.color ?? colors?.[i % colors.length] ?? "var(--chart-1)"} />
           ))}
+          <LabelList dataKey="value" position="top" style={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
         </Bar>
       </BarChart>
     </ResponsiveContainer>
@@ -176,7 +200,7 @@ export function AreaTrend({
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <AreaChart data={data} margin={{ top: 8, right: 24, bottom: 24, left: 8 }}>
+      <AreaChart data={data} margin={{ top: 24, right: 24, bottom: 64, left: 8 }}>
         <defs>
           {series.map((s) => (
             <linearGradient key={s.key} id={`grad-${s.key}`} x1="0" y1="0" x2="0" y2="1">
@@ -191,7 +215,7 @@ export function AreaTrend({
           tick={axisStyle}
           tickLine={false}
           axisLine={false}
-          label={xLabel ? { value: xLabel, position: "bottom", style: axisStyle } : undefined}
+          label={xLabel ? { value: xLabel, position: "bottom", style: axisStyle, offset: 12 } : undefined}
         />
         <YAxis
           tick={axisStyle}
@@ -202,7 +226,7 @@ export function AreaTrend({
           label={yLabel ? { value: yLabel, angle: -90, position: "insideLeft", style: axisStyle } : undefined}
         />
         <Tooltip contentStyle={tooltipStyle} />
-        {series.length > 1 && <Legend wrapperStyle={{ fontSize: 12 }} />}
+        {series.length > 1 && <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: 24, fontSize: 12 }} />}
         {series.map((s) => (
           <Area
             key={s.key}
@@ -212,7 +236,11 @@ export function AreaTrend({
             stroke={s.color}
             strokeWidth={2}
             fill={`url(#grad-${s.key})`}
-          />
+            animationDuration={CHART_DURATION}
+            animationEasing={CHART_EASING}
+          >
+            <LabelList dataKey={s.key} position="top" style={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+          </Area>
         ))}
       </AreaChart>
     </ResponsiveContainer>
@@ -235,14 +263,14 @@ export function LineTrend({
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <LineChart data={data} margin={{ top: 8, right: 24, bottom: 24, left: 8 }}>
+      <LineChart data={data} margin={{ top: 24, right: 24, bottom: 24, left: 8 }}>
         <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
         <XAxis
           dataKey="name"
           tick={axisStyle}
           tickLine={false}
           axisLine={false}
-          label={xLabel ? { value: xLabel, position: "bottom", style: axisStyle } : undefined}
+          label={xLabel ? { value: xLabel, position: "bottom", style: axisStyle, offset: 10 } : undefined}
         />
         <YAxis
           tick={axisStyle}
@@ -251,7 +279,9 @@ export function LineTrend({
           label={yLabel ? { value: yLabel, angle: -90, position: "insideLeft", style: axisStyle } : undefined}
         />
         <Tooltip contentStyle={tooltipStyle} />
-        <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} dot={false} />
+        <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} dot={true} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
+          <LabelList dataKey="value" position="top" style={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+        </Line>
       </LineChart>
     </ResponsiveContainer>
   );
@@ -269,20 +299,25 @@ export function PieBreakdown({
 }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <PieChart>
-        <Tooltip contentStyle={tooltipStyle} />
+      <PieChart margin={{ top: 24, right: 24, bottom: 24, left: 24 }}>
+        <Tooltip content={<CustomPieTooltip />} cursor={{ fill: "transparent" }} />
         <Pie
           data={data}
           dataKey="value"
           nameKey="name"
           cx="50%"
           cy="50%"
-          outerRadius={110}
-          innerRadius={donut ? 60 : 0}
-          paddingAngle={1}
+          outerRadius={100}
+          innerRadius={donut ? 50 : 0}
+          paddingAngle={0}
+          stroke="none"
+          label={({ percent }) => percent > 0.03 ? `${(percent * 100).toFixed(0)}%` : ''}
+          labelLine={false}
+          animationDuration={CHART_DURATION}
+          animationEasing={CHART_EASING}
         >
           {data.map((d, i) => (
-            <Cell key={i} fill={d.color ?? CHART_COLORS[i % CHART_COLORS.length]} />
+            <Cell key={i} fill={d.color ?? CHART_COLORS[i % CHART_COLORS.length]} stroke="none" />
           ))}
         </Pie>
       </PieChart>
@@ -307,7 +342,7 @@ export function Sparkline({
     <div style={{ width, height }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} margin={{ top: 4, right: 2, bottom: 4, left: 2 }}>
-          <Line type="monotone" dataKey="v" stroke={color} strokeWidth={1.5} dot={false} />
+          <Line type="monotone" dataKey="v" stroke={color} strokeWidth={1.5} dot={false} animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
         </LineChart>
       </ResponsiveContainer>
     </div>

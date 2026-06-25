@@ -65,15 +65,15 @@ export function KpiCard({
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2 text-slate-500">
-          {Icon && <Icon className="size-4 shrink-0 text-slate-400" />}
-          <span className="text-sm leading-tight text-slate-600">{title}</span>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          {Icon && <Icon className="size-4 shrink-0 text-muted-foreground/70" />}
+          <span className="text-sm leading-tight text-foreground/80">{title}</span>
         </div>
         {info ? (
           <TooltipProvider delayDuration={100}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="text-slate-300 hover:text-slate-500">
+                <button className="text-muted-foreground/50 hover:text-muted-foreground">
                   <Info className="size-3.5" />
                 </button>
               </TooltipTrigger>
@@ -81,12 +81,12 @@ export function KpiCard({
             </Tooltip>
           </TooltipProvider>
         ) : (
-          <Info className="size-3.5 shrink-0 text-slate-300" />
+          <Info className="size-3.5 shrink-0 text-muted-foreground/50" />
         )}
       </div>
 
       {empty ? (
-        <p className="mt-6 text-sm text-slate-400">No data available</p>
+        <p className="mt-6 text-sm text-muted-foreground">No data available</p>
       ) : subs && subs.length > 0 ? (
         <div className="mt-3 flex flex-wrap items-center gap-y-2">
           {subs.map((s, index) => {
@@ -98,7 +98,7 @@ export function KpiCard({
                 >
                   {s.value}
                 </span>
-                <span className="mt-0.5 text-[11px] text-slate-500">{s.label}</span>
+                <span className="mt-0.5 text-[11px] text-muted-foreground">{s.label}</span>
               </div>
             );
 
@@ -132,7 +132,7 @@ export function KpiCard({
           >
             {value}
           </div>
-          {caption && <p className="mt-1.5 text-[11px] text-slate-500">{caption}</p>}
+          {caption && <p className="mt-1.5 text-[11px] text-muted-foreground">{caption}</p>}
         </div>
       )}
     </Card>

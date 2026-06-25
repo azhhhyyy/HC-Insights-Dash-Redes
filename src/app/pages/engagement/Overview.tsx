@@ -24,7 +24,7 @@ import { KpiCardSkeleton } from "../../components/dashboard/SkeletonPrimitives";
 
 function SectionLabel({ children }: { children: string }) {
   return (
-    <h3 className="mb-3 mt-1 flex items-center gap-2 text-xs tracking-wide text-slate-400 uppercase">
+    <h3 className="mb-3 mt-1 flex items-center gap-2 text-xs tracking-wide text-muted-foreground/80 uppercase">
       {children}
       <span className="h-px flex-1 bg-border" />
     </h3>

@@ -4,6 +4,7 @@ import { CalendarClock } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
 import { usePageLoading } from "../../hooks/usePageLoading";
 import { KpiCardSkeleton, TableSkeleton } from "../../components/dashboard/SkeletonPrimitives";
+import { CHART_DURATION, CHART_EASING } from "../../components/dashboard/charts";
 
 const mockChartData = [
   { month: "Dec 24", scheduled: 0, completed: 650, missed: 150, cancelled: 50 },
@@ -70,10 +71,10 @@ export default function Appointments() {
                   content={<CustomBarTooltip />}
                 />
                 <Legend iconType="square" wrapperStyle={{ fontSize: 12, color: "#64748b", paddingTop: "20px" }} />
-                <Bar dataKey="scheduled" name="Scheduled" stackId="a" fill="#e32168" />
-                <Bar dataKey="completed" name="Completed" stackId="a" fill="#10b981" />
-                <Bar dataKey="missed" name="Missed" stackId="a" fill="#f59e0b" />
-                <Bar dataKey="cancelled" name="Cancelled" stackId="a" fill="#8b5cf6" />
+                <Bar dataKey="scheduled" name="Scheduled" stackId="a" fill="#e32168" animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
+                <Bar dataKey="completed" name="Completed" stackId="a" fill="#10b981" animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
+                <Bar dataKey="missed" name="Missed" stackId="a" fill="#f59e0b" animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
+                <Bar dataKey="cancelled" name="Cancelled" stackId="a" fill="#8b5cf6" animationDuration={CHART_DURATION} animationEasing={CHART_EASING} />
               </BarChart>
             </ResponsiveContainer>
           </div>

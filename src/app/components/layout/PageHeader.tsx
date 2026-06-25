@@ -37,16 +37,16 @@ export function PageHeader({
               {crumbs.map((c) => (
                 <span key={c.label} className="flex items-center gap-1.5">
                   {c.to ? (
-                    <Link to={c.to} className="text-slate-400 hover:text-primary">
+                    <Link to={c.to} className="text-muted-foreground/70 hover:text-foreground">
                       {c.label}
                     </Link>
                   ) : (
-                    <span className="text-slate-400">{c.label}</span>
+                    <span className="text-muted-foreground/70">{c.label}</span>
                   )}
                   <span className="text-border">/</span>
                 </span>
               ))}
-              <span className="text-slate-400">{title}</span>
+              <span className="text-muted-foreground/90">{title}</span>
             </nav>
             <h2 className="text-foreground text-balance font-semibold" style={{ fontSize: "1.4rem", lineHeight: 1.2 }}>
               {title}

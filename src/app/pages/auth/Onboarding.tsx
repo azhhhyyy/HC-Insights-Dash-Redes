@@ -30,12 +30,12 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8 font-sans transition-colors duration-200">
       <div className="w-full max-w-[600px] mb-16">
         <Stepper steps={ONBOARDING_STEPS} currentStep={currentStep} />
       </div>
 
-      <div className="w-full max-w-[600px] bg-white rounded-xl shadow-sm border border-slate-200 p-8 sm:p-10 min-h-[500px] flex flex-col relative overflow-hidden">
+      <div className="w-full max-w-[600px] bg-card text-card-foreground rounded-xl shadow-sm border border-border p-8 sm:p-10 min-h-[500px] flex flex-col relative overflow-hidden transition-colors duration-200">
         {currentStep === 1 && <UserDetailsStep onNext={handleNext} />}
         {currentStep === 2 && (
           <OrganizationDetailsStep 

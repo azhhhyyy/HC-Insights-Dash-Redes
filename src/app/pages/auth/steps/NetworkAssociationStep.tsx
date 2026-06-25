@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
 import { cn } from "../../../components/ui/utils";
 
 const MOCK_NETWORKS = [
@@ -62,8 +63,13 @@ function NetworkAutocomplete({
   return (
     <div className="relative w-full" ref={containerRef}>
       <Input
+        id="networkAutocomplete"
+        role="combobox"
+        aria-expanded={isOpen && inputValue.length >= 4}
+        aria-controls="network-listbox"
+        aria-autocomplete="list"
         placeholder="Type at least 4 characters to search..."
-        className="h-11 bg-white"
+        className="h-11 bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
         value={inputValue}
         onChange={(e) => {
           setInputValue(e.target.value);
@@ -77,13 +83,19 @@ function NetworkAutocomplete({
         }}
       />
       {isOpen && inputValue.length >= 4 && (
-        <div className="absolute top-[calc(100%+4px)] left-0 right-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-56 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+        <div 
+          id="network-listbox"
+          role="listbox"
+          className="absolute top-[calc(100%+4px)] left-0 right-0 bg-card border border-border rounded-lg shadow-lg z-50 max-h-56 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200"
+        >
           {filtered.length > 0 ? (
             <div className="py-1">
               {filtered.map((network) => (
                 <div
                   key={network}
-                  className="px-4 py-2.5 text-sm hover:bg-slate-50 cursor-pointer text-slate-700 transition-colors"
+                  role="option"
+                  aria-selected={value === network}
+                  className="px-4 py-2.5 text-sm hover:bg-muted cursor-pointer text-foreground transition-colors"
                   onClick={() => {
                     setInputValue(network);
                     onChange(network);
@@ -96,12 +108,12 @@ function NetworkAutocomplete({
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center gap-1.5 px-4 py-5 text-sm">
-              <span className="text-slate-500 text-center">
+              <span className="text-muted-foreground text-center">
                 No onboarded networks found matching "{inputValue}"
               </span>
               <button 
                 type="button"
-                className="text-[13px] font-semibold text-primary hover:underline transition-all"
+                className="text-[13px] font-semibold text-primary hover:underline transition-all focus:outline-none focus:ring-2 focus:ring-primary rounded px-1"
                 onClick={(e) => {
                   e.preventDefault();
                   window.open('/support', '_blank');
@@ -132,40 +144,45 @@ export function NetworkAssociationStep({ onNext, onPrev }: NetworkAssociationSte
   return (
     <div className="flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out h-full">
       <div className="mb-8 flex flex-col items-center">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-800">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">
           Network Association
         </h2>
-        <div className="mt-4 w-full border-t border-slate-200" />
+        <div className="mt-4 w-full border-t border-border" />
       </div>
 
       <div className="flex flex-col gap-6 mb-8">
-        <div className="flex flex-col gap-2">
-          <label className="text-[15px] font-semibold text-slate-800">
-            Is your practice affiliated with a network? <span className="text-primary">*</span>
-          </label>
+        <div className="flex flex-col gap-2" role="group" aria-labelledby="network-affil-label">
+          <span className="text-[15px] font-semibold text-foreground" id="network-affil-label">
+            Is your practice affiliated with a network? <span className="text-primary" aria-hidden="true">*</span>
+          </span>
           
-          <div className="relative inline-flex h-[42px] items-center rounded-full border border-slate-300 bg-slate-200/50 p-1 w-max">
+          <div className="relative inline-flex h-[42px] items-center rounded-full border border-border bg-muted p-1 w-max">
             {/* Sliding Pill Background */}
             <div 
               className={cn(
                 "absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                isAffiliated ? "left-1 bg-primary shadow-sm" : "left-1/2 bg-white shadow-sm"
+                isAffiliated ? "left-1 bg-primary shadow-sm" : "left-1/2 bg-card shadow-sm"
               )}
+              aria-hidden="true"
             />
             <button
+              type="button"
+              aria-pressed={isAffiliated}
               onClick={() => setIsAffiliated(true)}
               className={cn(
-                "relative z-10 px-8 py-1.5 text-sm font-semibold rounded-full transition-colors duration-300",
-                isAffiliated ? "text-white" : "text-slate-600 hover:text-slate-800"
+                "relative z-10 px-8 py-1.5 text-sm font-semibold rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                isAffiliated ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
               )}
             >
               Yes
             </button>
             <button
+              type="button"
+              aria-pressed={!isAffiliated}
               onClick={() => setIsAffiliated(false)}
               className={cn(
-                "relative z-10 px-8 py-1.5 text-sm font-semibold rounded-full transition-colors duration-300",
-                !isAffiliated ? "text-slate-800" : "text-slate-600 hover:text-slate-800"
+                "relative z-10 px-8 py-1.5 text-sm font-semibold rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                !isAffiliated ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               )}
             >
               No
@@ -183,9 +200,9 @@ export function NetworkAssociationStep({ onNext, onPrev }: NetworkAssociationSte
         >
           <div className={cn("px-2 -mx-2 pt-1 -mt-1", !isDropdownOpen && "overflow-hidden")}>
             <div className="flex flex-col gap-1.5 pb-2">
-              <label className="text-[15px] font-semibold text-slate-800">
-                Network Name <span className="text-primary">*</span>
-              </label>
+              <Label htmlFor="networkAutocomplete" className="text-[15px] font-semibold text-foreground">
+                Network Name <span className="text-primary" aria-hidden="true">*</span>
+              </Label>
               <NetworkAutocomplete 
                 value={networkName} 
                 onChange={setNetworkName} 
@@ -198,13 +215,15 @@ export function NetworkAssociationStep({ onNext, onPrev }: NetworkAssociationSte
 
       <div className="flex w-full gap-4 mt-auto">
         <Button
+          type="button"
           variant="outline"
           onClick={onPrev}
-          className="flex-1 rounded-md border-primary text-primary hover:bg-primary/5 hover:text-primary py-6 text-base font-semibold"
+          className="flex-1 rounded-md border-border bg-card text-foreground hover:bg-muted py-6 text-base font-semibold"
         >
           Previous
         </Button>
         <Button 
+          type="button"
           onClick={onNext} 
           disabled={!canProceed}
           className="flex-[2] rounded-md py-6 text-base font-semibold"

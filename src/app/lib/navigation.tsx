@@ -29,6 +29,7 @@ export type NavItem = {
   icon: LucideIcon;
   path: string;
   subItems?: { key: string; label: string; path: string }[];
+  tourId?: string;
 };
 
 /** Primary analytics modules, in display order, matching the Figma frame. */
@@ -39,6 +40,7 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Engagement & Utilization", 
     icon: BarChart3, 
     path: "/engagement",
+    tourId: "tour-step-2",
     subItems: [
       { key: "eng-overview", label: "Overview", path: "/engagement" },
       { key: "eng-active-patients", label: "Active Patients", path: "/engagement/active-patients" },
@@ -58,15 +60,15 @@ export const NAV_ITEMS: NavItem[] = [
       { key: "eng-after-hours-msg", label: "After Hours Messages", path: "/engagement/after-hours-messages" },
     ]
   },
-  { key: "cost-savings", label: "Cost Savings", icon: BadgeDollarSign, path: "/cost-savings" },
-  { key: "utilization-gaps", label: "Utilization Gaps", icon: Users, path: "/utilization-gaps" },
-  { key: "chronic-risk", label: "Chronic Risk", icon: HeartPulse, path: "/chronic-risk" },
-  { key: "claims", label: "Claims Utilization", icon: ReceiptText, path: "/claims" },
-  { key: "billing", label: "Claims Billing Report", icon: Receipt, path: "/billing" },
-  { key: "coordinated-care", label: "Coordinated Care", icon: Workflow, path: "/coordinated-care" },
-  { key: "communication", label: "Communication", icon: MessageSquare, path: "/communication" },
-  { key: "marketing", label: "Marketing", icon: Megaphone, path: "/marketing" },
-  { key: "survey", label: "Survey", icon: ClipboardCheck, path: "/survey" },
+  { key: "cost-savings", label: "Cost Savings", icon: BadgeDollarSign, path: "/cost-savings", tourId: "tour-step-6" },
+  { key: "utilization-gaps", label: "Utilization Gaps", icon: Users, path: "/utilization-gaps", tourId: "tour-step-3" },
+  { key: "chronic-risk", label: "Chronic Risk", icon: HeartPulse, path: "/chronic-risk", tourId: "tour-step-4" },
+  { key: "claims", label: "Claims Utilization", icon: ReceiptText, path: "/claims", tourId: "tour-step-7" },
+  { key: "billing", label: "Claims Billing Report", icon: Receipt, path: "/billing", tourId: "tour-step-5" },
+  { key: "coordinated-care", label: "Coordinated Care", icon: Workflow, path: "/coordinated-care", tourId: "tour-step-8" },
+  { key: "communication", label: "Communication", icon: MessageSquare, path: "/communication", tourId: "tour-step-9" },
+  { key: "marketing", label: "Marketing", icon: Megaphone, path: "/marketing", tourId: "tour-step-10" },
+  { key: "survey", label: "Survey", icon: ClipboardCheck, path: "/survey", tourId: "tour-step-11" },
 ];
 
 export const HCC_NAV_ITEMS: NavItem[] = [

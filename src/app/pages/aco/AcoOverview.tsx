@@ -7,6 +7,7 @@ import { KpiCard } from "../../components/dashboard/KpiCard";
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, Cell } from "recharts";
 import { usePageLoading } from "../../hooks/usePageLoading";
 import { KpiCardSkeleton, ChartSkeleton, TableSkeleton } from "../../components/dashboard/SkeletonPrimitives";
+import { CHART_DURATION, CHART_EASING } from "../../components/dashboard/charts";
 
 type MeasureCardProps = {
   id: string;
@@ -299,6 +300,8 @@ export default function AcoOverview() {
                         fillOpacity={1}
                         fill="url(#colorMet)"
                         activeDot={{ r: 6 }}
+                        animationDuration={CHART_DURATION}
+                        animationEasing={CHART_EASING}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -335,7 +338,7 @@ export default function AcoOverview() {
                         cursor={{ fill: "transparent" }}
                         contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                       />
-                      <Bar dataKey="count" radius={[4, 4, 0, 0]} barSize={40}>
+                      <Bar dataKey="count" radius={[4, 4, 0, 0]} barSize={40} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
                         {chartData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}

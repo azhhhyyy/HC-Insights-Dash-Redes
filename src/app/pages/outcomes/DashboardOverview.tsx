@@ -5,6 +5,7 @@ import { Users, ShieldAlert, AlertCircle, CalendarClock, Pill, Activity, LayoutD
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from "recharts";
 import { usePageLoading } from "../../hooks/usePageLoading";
 import { KpiCardSkeleton, PieChartSkeleton } from "../../components/dashboard/SkeletonPrimitives";
+import { CHART_DURATION, CHART_EASING } from "../../components/dashboard/charts";
 
 const kpiData = [
   { id: "total-patients", title: "Total Patients", value: "1,550", caption: "Actively monitored patients", icon: Users },
@@ -33,12 +34,12 @@ const CustomPieTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0];
     return (
-      <div className="flex items-center justify-between gap-6 rounded-lg border bg-white px-3 py-2 shadow-md">
+      <div className="flex items-center justify-between gap-6 rounded-lg border bg-card px-3 py-2 shadow-md">
         <div className="flex items-center gap-2">
           <div className="size-3.5 rounded-[3px]" style={{ backgroundColor: data.payload.color }} />
-          <span className="text-[13px] font-medium text-slate-500">{data.name}</span>
+          <span className="text-[13px] font-medium text-muted-foreground">{data.name}</span>
         </div>
-        <span className="text-[13px] text-slate-800">{data.payload.value}</span>
+        <span className="text-[13px] text-foreground">{data.payload.value}</span>
       </div>
     );
   }
@@ -91,13 +92,17 @@ export default function DashboardOverview() {
                     cx="50%"
                     cy="50%"
                     innerRadius={0}
-                    outerRadius={200}
+                    outerRadius="80%"
                     stroke="none"
                     paddingAngle={0}
                     dataKey="value"
+                    label={({ percent }) => percent > 0.03 ? `${(percent * 100).toFixed(0)}%` : ''}
+                    labelLine={false}
+                    animationDuration={CHART_DURATION}
+                    animationEasing={CHART_EASING}
                   >
                     {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                     ))}
                   </Pie>
                   <RechartsTooltip content={<CustomPieTooltip />} cursor={{ fill: "transparent" }} />
@@ -108,7 +113,7 @@ export default function DashboardOverview() {
               {pieData.map((entry, index) => (
                 <div key={index} className="flex items-start text-xs">
                   <div className="size-2.5 rounded-full mr-2 shrink-0 mt-0.5" style={{ backgroundColor: entry.color }} />
-                  <span className="font-medium text-slate-500 leading-snug">({entry.value}) {entry.name}</span>
+                  <span className="font-medium text-muted-foreground leading-snug">({entry.value}) {entry.name}</span>
                 </div>
               ))}
             </div>

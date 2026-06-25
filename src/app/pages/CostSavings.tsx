@@ -1,9 +1,12 @@
 import { Page } from "../components/layout/Page";
+import { KpiCard } from "../components/dashboard/KpiCard";
 import { Info } from "lucide-react";
+import { cn } from "../components/ui/utils";
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, PieChart, Pie, Sector } from "recharts";
 import { useState } from "react";
 import { ChartTooltip } from "../components/dashboard/ChartTooltip";
 import { DataTable, type Column } from "../components/dashboard/DataTable";
+import { CHART_DURATION, CHART_EASING } from "../components/dashboard/charts";
 import { usePageLoading } from "../hooks/usePageLoading";
 import { KpiCardSkeleton, ChartSkeleton, PieChartSkeleton, TableSkeleton } from "../components/dashboard/SkeletonPrimitives";
 
@@ -77,11 +80,50 @@ const renderActiveShape = (props: any) => {
   );
 };
 
-
+const CATEGORY_PATIENTS: Record<string, any[]> = {
+  "Covered Visit": [
+    { id: "PT-1042", name: "Sarah Jenkins", email: "s.jenkins@example.com", cpt: "99214 : 4 Visits", employer: "Acme Corp", dpc: "Downtown Health", physician: "Dr. Robert Chen" },
+    { id: "PT-1089", name: "Michael Chang", email: "m.chang@example.com", cpt: "99213 : 2 Visits", employer: "Acme Corp", dpc: "Westside Clinic", physician: "Dr. Emily Alcott" },
+    { id: "PT-1102", name: "Amanda Ross", email: "a.ross@example.com", cpt: "99215 : 1 Visit", employer: "Globex Inc", dpc: "Downtown Health", physician: "Dr. Robert Chen" },
+  ],
+  "Covered Procedures": [
+    { id: "PT-2011", name: "David Smith", email: "d.smith@example.com", cpt: "17000 : 1 Visit", employer: "Stark Industries", dpc: "Northside Care", physician: "Dr. Marcus Brody" },
+    { id: "PT-2045", name: "Elena Rostova", email: "e.rostova@example.com", cpt: "11102 : 2 Visits", employer: "Wayne Enterprises", dpc: "Downtown Health", physician: "Dr. Robert Chen" },
+  ],
+  "Low Cost Labs": [
+    { id: "PT-3022", name: "Rachel Green", email: "r.green@example.com", cpt: "80053 : 2 Visits", employer: "Central Perk", dpc: "Village Health", physician: "Dr. Richard Burke" },
+    { id: "PT-3091", name: "Ross Geller", email: "r.geller@example.com", cpt: "85025 : 1 Visit", employer: "NYU", dpc: "Village Health", physician: "Dr. Richard Burke" },
+  ],
+  "Free Rx": [
+    { id: "PT-4012", name: "Walter White", email: "w.white@example.com", cpt: "RX-FREE : 3 Refills", employer: "JPW High School", dpc: "Desert Care", physician: "Dr. Delcavoli" },
+  ],
+  "Medication Management": [
+    { id: "PT-5088", name: "Jesse Pinkman", email: "j.pinkman@example.com", cpt: "99605 : 2 Visits", employer: "Self Employed", dpc: "Desert Care", physician: "Dr. Delcavoli" },
+  ],
+  "Quality Measures / Screening (Custom)": [
+    { id: "PT-6011", name: "Leslie Knope", email: "l.knope@example.com", cpt: "G0438 : 1 Visit", employer: "City of Pawnee", dpc: "Pawnee Health", physician: "Dr. Harris" },
+  ],
+  "Messaging": [
+    { id: "PT-7034", name: "Ron Swanson", email: "r.swanson@example.com", cpt: "99421 : 5 Msgs", employer: "City of Pawnee", dpc: "Pawnee Health", physician: "Dr. Harris" },
+  ],
+  "Spruce Conversation": [
+    { id: "PT-8099", name: "Tom Haverford", email: "t.haverford@example.com", cpt: "SPR-01 : 2 Chats", employer: "Entertainment 720", dpc: "Pawnee Health", physician: "Dr. Harris" },
+  ],
+  "Encounter": [
+    { id: "PT-9012", name: "Ann Perkins", email: "a.perkins@example.com", cpt: "99211 : 1 Visit", employer: "Pawnee General", dpc: "Pawnee Health", physician: "Dr. Harris" },
+  ],
+  "Covered Labs": [
+    { id: "PT-9101", name: "Ben Wyatt", email: "b.wyatt@example.com", cpt: "80061 : 1 Visit", employer: "State of Indiana", dpc: "Pawnee Health", physician: "Dr. Harris" },
+  ],
+  "Low Cost Procedures": [
+    { id: "PT-9202", name: "Chris Traeger", email: "c.traeger@example.com", cpt: "93000 : 1 Visit", employer: "City of Pawnee", dpc: "Pawnee Health", physician: "Dr. Harris" },
+  ],
+};
 
 export default function CostSavings() {
   const isLoading = usePageLoading();
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
 
   if (isLoading) {
     return (
@@ -181,7 +223,7 @@ export default function CostSavings() {
                   content={<ChartTooltip valueFormatter={(v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v)} />}
                   cursor={{ fill: 'var(--muted)', opacity: 0.3 }}
                 />
-                <Bar dataKey="value" radius={[6, 6, 0, 0]} animationDuration={800} animationEasing="ease-out">
+                <Bar dataKey="value" radius={[6, 6, 0, 0]} animationDuration={CHART_DURATION} animationEasing={CHART_EASING}>
                   {overviewData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={barColors[index]} />
                   ))}
@@ -190,6 +232,31 @@ export default function CostSavings() {
             </ResponsiveContainer>
           </div>
         </div>
+      </div>
+
+      {/* Encounters KPI Cards Row */}
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 stagger-section">
+        <KpiCard
+          title="Total # Encounters"
+          value="124"
+          caption="Total encounters during selected timeframe."
+          className="lg:col-span-1"
+        />
+        <KpiCard
+          title="Encounter Types - Breakdown"
+          subs={[
+            { value: "91", label: "Spruce Conversation" },
+            { value: "17", label: "Clinic (Office)" },
+            { value: "14", label: "Phone/Video (Virtual)" },
+          ]}
+          className="md:col-span-2 lg:col-span-2"
+        />
+        <KpiCard
+          title="Total # After Hours Encounters"
+          value="7"
+          caption="Total encounters after hours and weekends."
+          className="lg:col-span-1"
+        />
       </div>
 
       {/* Middle Section (Pie Chart Breakdown) */}
@@ -202,18 +269,24 @@ export default function CostSavings() {
         <div className="flex flex-1 flex-col md:flex-row items-center gap-8">
           {/* Legend */}
           <div className="flex-1 space-y-2">
-            {pieData.map((item, index) => (
+            {pieData.map((item, index) => {
+              const isSelected = selectedCategory === item.name;
+              return (
               <div 
                 key={index} 
-                className="flex items-center gap-2 cursor-pointer text-sm font-medium text-foreground transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:translate-x-1"
-                style={{ opacity: activeIndex === undefined || activeIndex === index ? 1 : 0.4 }}
+                className={cn(
+                  "flex items-center gap-2 cursor-pointer text-sm font-medium transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:translate-x-1",
+                  isSelected ? "text-primary font-bold" : "text-foreground"
+                )}
+                style={{ opacity: selectedCategory ? (isSelected ? 1 : 0.3) : (activeIndex === undefined || activeIndex === index ? 1 : 0.4) }}
+                onClick={() => setSelectedCategory(isSelected ? undefined : item.name)}
                 onMouseEnter={() => setActiveIndex(index)}
                 onMouseLeave={() => setActiveIndex(undefined)}
               >
                 <span className="size-3 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
                 {item.name}: {formatCurrency(item.value)}
               </div>
-            ))}
+            );})}
           </div>
 
           {/* Pie Chart */}
@@ -227,17 +300,18 @@ export default function CostSavings() {
                   innerRadius={0}
                   outerRadius={120}
                   dataKey="displayValue"
-                  stroke="var(--background)"
-                  strokeWidth={2}
+                  stroke="none"
                   activeIndex={activeIndex}
                   activeShape={renderActiveShape}
                   onMouseEnter={(_, index) => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(undefined)}
-                  animationDuration={800}
-                  animationEasing="ease-out"
+                  onClick={(_, index) => setSelectedCategory(selectedCategory === pieData[index].name ? undefined : pieData[index].name)}
+                  animationDuration={CHART_DURATION}
+                  animationEasing={CHART_EASING}
+                  className="cursor-pointer"
                 >
                   {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                   ))}
                 </Pie>
                 <RechartsTooltip 
@@ -251,11 +325,25 @@ export default function CostSavings() {
 
       {/* Bottom Section (Data Table) */}
       <div className="rounded-2xl border border-transparent flex flex-col min-h-[200px] stagger-section">
+        {selectedCategory && (
+          <div className="mb-4 flex items-center justify-between rounded-xl bg-muted/30 px-4 py-2.5 border border-border">
+            <div className="flex items-center gap-2">
+              <span className="size-2.5 rounded-full" style={{ backgroundColor: pieData.find(p => p.name === selectedCategory)?.color }} />
+              <span className="text-xs font-semibold text-foreground">Showing patient details for: <span className="text-primary font-bold">{selectedCategory}</span></span>
+            </div>
+            <button
+              onClick={() => setSelectedCategory(undefined)}
+              className="text-xs font-medium text-muted-foreground hover:text-foreground underline cursor-pointer"
+            >
+              Clear filter
+            </button>
+          </div>
+        )}
         <DataTable
           columns={tableColumns}
-          rows={[]} // Empty array to match the mockup empty state
+          rows={selectedCategory ? CATEGORY_PATIENTS[selectedCategory] || [] : []}
           rowKey={(_, i) => String(i)}
-          emptyMessage="Click a service to show or hide patient details"
+          emptyMessage="Click any service category or legend above to show patient details"
         />
       </div>
     </Page>
