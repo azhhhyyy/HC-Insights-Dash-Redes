@@ -57,6 +57,49 @@ import {
   type GapTier,
 } from "../../data/actionCentreData";
 import { cn } from "../../components/ui/utils";
+import { motion } from "framer-motion";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../../components/ui/dialog";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+const getMetricGraphData = (count: number, view: "WoW" | "MoM", isPositive: boolean) => {
+  if (view === "WoW") {
+    const factor = isPositive ? 0.85 : 1.15;
+    return [
+      { period: "Wk 1", value: Math.max(1, Math.round(count * factor * 0.9)), benchmark: Math.round(count * 0.95) },
+      { period: "Wk 2", value: Math.max(1, Math.round(count * factor * 0.93)), benchmark: Math.round(count * 0.95) },
+      { period: "Wk 3", value: Math.max(1, Math.round(count * factor * 0.96)), benchmark: Math.round(count * 0.95) },
+      { period: "Wk 4", value: Math.max(1, Math.round(count * factor * 0.98)), benchmark: Math.round(count * 0.95) },
+      { period: "Wk 5", value: Math.max(1, Math.round(count * factor * 1.0)), benchmark: Math.round(count * 0.95) },
+      { period: "Wk 6", value: Math.max(1, Math.round(count * 0.96)), benchmark: Math.round(count * 0.95) },
+      { period: "Wk 7", value: Math.max(1, Math.round(count * 0.93)), benchmark: Math.round(count * 0.95) },
+      { period: "Current Wk", value: count, benchmark: Math.round(count * 0.95) },
+    ];
+  } else {
+    const factor = isPositive ? 0.75 : 1.25;
+    return [
+      { period: "Feb", value: Math.max(1, Math.round(count * factor * 0.85)), benchmark: Math.round(count * 0.9) },
+      { period: "Mar", value: Math.max(1, Math.round(count * factor * 0.9)), benchmark: Math.round(count * 0.9) },
+      { period: "Apr", value: Math.max(1, Math.round(count * factor * 0.95)), benchmark: Math.round(count * 0.9) },
+      { period: "May", value: Math.max(1, Math.round(count * 0.92)), benchmark: Math.round(count * 0.9) },
+      { period: "Jun", value: Math.max(1, Math.round(count * 0.95)), benchmark: Math.round(count * 0.9) },
+      { period: "Jul (Current)", value: count, benchmark: Math.round(count * 0.9) },
+    ];
+  }
+};
 
 export default function ActionCentreOverview() {
   const [activeCohort, setActiveCohort] = useState<CohortType | "all">("all");
@@ -65,6 +108,8 @@ export default function ActionCentreOverview() {
   const [sortBy, setSortBy] = useState<string>("highest-risk");
   const [selectedPatient, setSelectedPatient] = useState<ActionCentrePatientRow | null>(null);
   const [completedPatientIds, setCompletedPatientIds] = useState<Set<string>>(new Set());
+  const [selectedMetricOverlay, setSelectedMetricOverlay] = useState<typeof COHORT_SUMMARIES[number] | null>(null);
+  const [metricGraphView, setMetricGraphView] = useState<"WoW" | "MoM">("WoW");
 
   // Filter patients
   const filteredPatients = useMemo(() => {
@@ -150,41 +195,42 @@ export default function ActionCentreOverview() {
   };
 
   const getCohortIconBox = (id: string) => {
+    const baseClass = "flex size-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400";
     switch (id) {
       case "new-activation":
         return (
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
-            <UserPlus className="size-4" />
+          <div className={baseClass}>
+            <UserPlus className="size-3.5" />
           </div>
         );
       case "engagement-gap":
         return (
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
-            <Clock className="size-4" />
+          <div className={baseClass}>
+            <Clock className="size-3.5" />
           </div>
         );
       case "high-chronic-risk":
         return (
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
-            <HeartPulse className="size-4" />
+          <div className={baseClass}>
+            <HeartPulse className="size-3.5" />
           </div>
         );
       case "utilization-leakage":
         return (
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400">
-            <AlertTriangle className="size-4" />
+          <div className={baseClass}>
+            <AlertTriangle className="size-3.5" />
           </div>
         );
       case "low-response":
         return (
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
-            <MessageSquareOff className="size-4" />
+          <div className={baseClass}>
+            <MessageSquareOff className="size-3.5" />
           </div>
         );
       default:
         return (
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Activity className="size-4" />
+          <div className={baseClass}>
+            <Activity className="size-3.5" />
           </div>
         );
     }
@@ -227,44 +273,52 @@ export default function ActionCentreOverview() {
                     : "border-transparent bg-card shadow-sm hover:shadow-md hover:bg-accent/30"
                 )}
               >
-                <CardContent className="p-4 flex flex-col justify-between h-full space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 line-clamp-2 leading-tight">
-                      {card.title}
-                    </span>
-                    {getCohortIconBox(card.id)}
-                  </div>
-
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold tracking-tight tabular-nums text-foreground">
-                      {card.count}
-                    </span>
-                    <span className="text-[11px] text-muted-foreground">patients</span>
-                  </div>
-
-                  {/* WoW and MoM Badges */}
-                  <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-border/50 text-[11px]">
-                    <div
-                      className={cn(
-                        "flex items-center gap-0.5 rounded px-1.5 py-0.5 font-medium",
-                        card.wowPositive
-                          ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                          : "bg-rose-500/10 text-rose-700 dark:text-rose-400"
-                      )}
-                      title="Week over Week Change"
-                    >
-                      {card.wowPositive ? (
-                        <ArrowDownRight className="size-3" />
-                      ) : (
-                        <ArrowUpRight className="size-3" />
-                      )}
-                      <span>{card.wowChange} WoW</span>
+                <CardContent className="p-3.5 flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 line-clamp-1 leading-tight pt-0.5">
+                        {card.title}
+                      </span>
+                      {getCohortIconBox(card.id)}
                     </div>
 
+                    <div className="flex items-baseline gap-2 mt-2">
+                      <span className="text-2xl font-bold tracking-tight tabular-nums text-foreground">
+                        {card.count}
+                      </span>
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[11px] font-medium tracking-tight",
+                          card.wowPositive
+                            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                            : "bg-rose-500/10 text-rose-700 dark:text-rose-400"
+                        )}
+                        title="Week over Week Change"
+                      >
+                        {card.wowPositive ? (
+                          <ArrowDownRight className="size-3" />
+                        ) : (
+                          <ArrowUpRight className="size-3" />
+                        )}
+                        <span>{card.wowChange} WoW</span>
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="pt-2 text-xs font-semibold text-primary group-hover:underline">
-                    <span>View Details</span>
+                  <div className="mt-3 flex items-center justify-between pt-2 border-t border-border/40 text-[11px]">
+                    <span className="text-muted-foreground font-medium">Patients</span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedMetricOverlay(card);
+                        setMetricGraphView("WoW");
+                      }}
+                      className="font-semibold text-primary hover:underline cursor-pointer flex items-center gap-1"
+                    >
+                      <span>View Details</span>
+                      <ExternalLink className="size-3" />
+                    </button>
                   </div>
                 </CardContent>
               </Card>
@@ -317,133 +371,122 @@ export default function ActionCentreOverview() {
         {/* Cohort Tabs Bar */}
         <div className="px-4 pt-3 border-b border-border/50 overflow-x-auto">
           <div className="pb-3">
-            <div className="inline-flex flex-wrap items-center gap-1 rounded-md border bg-card p-1 shadow-2xs">
-              <button
-                onClick={() => {
-                  setActiveCohort("all");
-                  setActiveGapTier("all");
-                }}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
-                  activeCohort === "all"
-                    ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                <span>All Requiring Attention</span>
-                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "all" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
-                  148
-                </span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveCohort("new-activation");
-                  setActiveGapTier("all");
-                }}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
-                  activeCohort === "new-activation"
-                    ? "bg-emerald-600 dark:bg-emerald-500 text-white font-semibold shadow-sm"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                <UserPlus className={cn("size-3.5", activeCohort === "new-activation" ? "text-white" : "text-emerald-500/80")} />
-                <span>New Activation</span>
-                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "new-activation" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
-                  28
-                </span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveCohort("engagement-gap");
-                }}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
-                  activeCohort === "engagement-gap"
-                    ? "bg-amber-600 dark:bg-amber-500 text-white font-semibold shadow-sm"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                <Clock className={cn("size-3.5", activeCohort === "engagement-gap" ? "text-white" : "text-amber-500/80")} />
-                <span>Engagement Gap</span>
-                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "engagement-gap" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
-                  54
-                </span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveCohort("high-chronic-risk");
-                  setActiveGapTier("all");
-                }}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
-                  activeCohort === "high-chronic-risk"
-                    ? "bg-rose-600 dark:bg-rose-500 text-white font-semibold shadow-sm"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                <HeartPulse className={cn("size-3.5", activeCohort === "high-chronic-risk" ? "text-white" : "text-rose-500/80")} />
-                <span>High Chronic Risk</span>
-                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "high-chronic-risk" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
-                  31
-                </span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveCohort("utilization-leakage");
-                  setActiveGapTier("all");
-                }}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
-                  activeCohort === "utilization-leakage"
-                    ? "bg-purple-600 dark:bg-purple-500 text-white font-semibold shadow-sm"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                <AlertTriangle className={cn("size-3.5", activeCohort === "utilization-leakage" ? "text-white" : "text-purple-500/80")} />
-                <span>Utilization Leakage</span>
-                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "utilization-leakage" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
-                  19
-                </span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveCohort("low-response");
-                  setActiveGapTier("all");
-                }}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
-                  activeCohort === "low-response"
-                    ? "bg-sky-600 dark:bg-sky-500 text-white font-semibold shadow-sm"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                )}
-              >
-                <MessageSquareOff className={cn("size-3.5", activeCohort === "low-response" ? "text-white" : "text-sky-500/80")} />
-                <span>Low Response</span>
-                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "low-response" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
-                  16
-                </span>
-              </button>
+            <div className="inline-flex flex-wrap items-center gap-1 rounded-md border bg-card p-1 shadow-2xs relative z-0">
+              {[
+                {
+                  id: "all" as const,
+                  label: "All Requiring Attention",
+                  count: 148,
+                  icon: null,
+                  activeBg: "bg-primary",
+                  activeText: "text-primary-foreground font-semibold",
+                  activeBadge: "bg-white/20 text-white",
+                  unselectedIcon: null,
+                },
+                {
+                  id: "new-activation" as const,
+                  label: "New Activation",
+                  count: 28,
+                  icon: UserPlus,
+                  activeBg: "bg-emerald-600 dark:bg-emerald-500",
+                  activeText: "text-white font-semibold",
+                  activeBadge: "bg-white/20 text-white",
+                  unselectedIcon: "text-emerald-500/80",
+                },
+                {
+                  id: "engagement-gap" as const,
+                  label: "Engagement Gap",
+                  count: 54,
+                  icon: Clock,
+                  activeBg: "bg-amber-600 dark:bg-amber-500",
+                  activeText: "text-white font-semibold",
+                  activeBadge: "bg-white/20 text-white",
+                  unselectedIcon: "text-amber-500/80",
+                },
+                {
+                  id: "high-chronic-risk" as const,
+                  label: "High Chronic Risk",
+                  count: 31,
+                  icon: HeartPulse,
+                  activeBg: "bg-rose-600 dark:bg-rose-500",
+                  activeText: "text-white font-semibold",
+                  activeBadge: "bg-white/20 text-white",
+                  unselectedIcon: "text-rose-500/80",
+                },
+                {
+                  id: "utilization-leakage" as const,
+                  label: "Utilization Leakage",
+                  count: 19,
+                  icon: AlertTriangle,
+                  activeBg: "bg-purple-600 dark:bg-purple-500",
+                  activeText: "text-white font-semibold",
+                  activeBadge: "bg-white/20 text-white",
+                  unselectedIcon: "text-purple-500/80",
+                },
+                {
+                  id: "low-response" as const,
+                  label: "Low Response",
+                  count: 16,
+                  icon: MessageSquareOff,
+                  activeBg: "bg-sky-600 dark:bg-sky-500",
+                  activeText: "text-white font-semibold",
+                  activeBadge: "bg-white/20 text-white",
+                  unselectedIcon: "text-sky-500/80",
+                },
+              ].map((tab) => {
+                const isSelected = activeCohort === tab.id;
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveCohort(tab.id);
+                      if (tab.id !== "engagement-gap") setActiveGapTier("all");
+                    }}
+                    className={cn(
+                      "relative z-10 flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors cursor-pointer select-none",
+                      isSelected
+                        ? tab.activeText
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    )}
+                  >
+                    {isSelected && (
+                      <motion.div
+                        layoutId="queueSwitchIndicator"
+                        className={cn("absolute inset-0 rounded-md shadow-sm z-[-1]", tab.activeBg)}
+                        transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+                      />
+                    )}
+                    {Icon && (
+                      <Icon className={cn("size-3.5", isSelected ? "text-white" : tab.unselectedIcon)} />
+                    )}
+                    <span>{tab.label}</span>
+                    <span
+                      className={cn(
+                        "px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold",
+                        isSelected ? tab.activeBadge : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {/* Sub-filters for Engagement Gap */}
           {activeCohort === "engagement-gap" && (
-            <div className="flex items-center gap-2 pb-3 pt-1 border-t border-border/40 text-xs">
+            <div className="flex flex-wrap items-center gap-2 pb-3 pt-1 border-t border-border/40 text-xs">
               <span className="text-muted-foreground font-medium flex items-center gap-1">
                 <Filter className="size-3" /> Duration Sub-filter:
               </span>
               <button
                 onClick={() => setActiveGapTier("all")}
                 className={cn(
-                  "px-2.5 py-1 rounded-md transition-colors font-medium",
+                  "px-2.5 py-1 rounded-md transition-colors font-medium cursor-pointer",
                   activeGapTier === "all"
-                    ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40"
+                    ? "bg-pink-500/15 text-pink-700 dark:bg-pink-500/25 dark:text-pink-300 border border-pink-500/40 font-semibold shadow-2xs"
                     : "text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
                 )}
               >
@@ -452,9 +495,9 @@ export default function ActionCentreOverview() {
               <button
                 onClick={() => setActiveGapTier("30-days")}
                 className={cn(
-                  "px-2.5 py-1 rounded-md transition-colors font-medium",
+                  "px-2.5 py-1 rounded-md transition-colors font-medium cursor-pointer",
                   activeGapTier === "30-days"
-                    ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40"
+                    ? "bg-pink-500/15 text-pink-700 dark:bg-pink-500/25 dark:text-pink-300 border border-pink-500/40 font-semibold shadow-2xs"
                     : "text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
                 )}
               >
@@ -463,9 +506,9 @@ export default function ActionCentreOverview() {
               <button
                 onClick={() => setActiveGapTier("60-days")}
                 className={cn(
-                  "px-2.5 py-1 rounded-md transition-colors font-medium",
+                  "px-2.5 py-1 rounded-md transition-colors font-medium cursor-pointer",
                   activeGapTier === "60-days"
-                    ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40"
+                    ? "bg-pink-500/15 text-pink-700 dark:bg-pink-500/25 dark:text-pink-300 border border-pink-500/40 font-semibold shadow-2xs"
                     : "text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
                 )}
               >
@@ -474,14 +517,35 @@ export default function ActionCentreOverview() {
               <button
                 onClick={() => setActiveGapTier("90-days")}
                 className={cn(
-                  "px-2.5 py-1 rounded-md transition-colors font-medium",
+                  "px-2.5 py-1 rounded-md transition-colors font-medium cursor-pointer",
                   activeGapTier === "90-days"
-                    ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40"
+                    ? "bg-pink-500/15 text-pink-700 dark:bg-pink-500/25 dark:text-pink-300 border border-pink-500/40 font-semibold shadow-2xs"
                     : "text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
                 )}
               >
                 90+ Days Critical Gap
               </button>
+              <button
+                onClick={() => setActiveGapTier("custom")}
+                className={cn(
+                  "px-2.5 py-1 rounded-md transition-colors font-medium cursor-pointer flex items-center gap-1",
+                  activeGapTier === "custom"
+                    ? "bg-pink-500/15 text-pink-700 dark:bg-pink-500/25 dark:text-pink-300 border border-pink-500/40 font-semibold shadow-2xs"
+                    : "text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800"
+                )}
+              >
+                <Calendar className="size-3" />
+                <span>Custom Date Range</span>
+              </button>
+
+              {activeGapTier === "custom" && (
+                <div className="inline-flex items-center gap-1.5 ml-1 pl-2 border-l border-border/60 animate-fade-in text-[11px]">
+                  <span className="text-muted-foreground">From:</span>
+                  <input type="date" defaultValue="2025-10-01" className="h-6 rounded border border-border bg-background px-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                  <span className="text-muted-foreground">To:</span>
+                  <input type="date" defaultValue="2026-03-31" className="h-6 rounded border border-border bg-background px-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary" />
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -568,25 +632,19 @@ export default function ActionCentreOverview() {
                       </td>
 
                       <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-2">
-                          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 hidden xl:inline">
-                            {patient.suggestedAction}
-                          </span>
-                          <Button
-                            size="sm"
-                            variant={isDone ? "outline" : "default"}
-                            className={cn(
-                              "h-8 text-xs font-semibold gap-1.5 shadow-sm",
-                              !isDone && "bg-primary hover:bg-primary/90"
-                            )}
-                            onClick={(e) => handleTriggerAction(patient, e)}
-                          >
-                            {patient.suggestedActionType === "sms" && <MessageSquare className="size-3.5" />}
-                            {patient.suggestedActionType === "email" && <Mail className="size-3.5" />}
-                            {patient.suggestedActionType === "call" && <Phone className="size-3.5" />}
-                            {patient.suggestedActionType === "appt" && <Calendar className="size-3.5" />}
-                            <span>{isDone ? "Re-send Action" : "Execute Action"}</span>
-                          </Button>
+                        <div className="inline-flex items-center justify-end gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">
+                          {patient.suggestedActionType === "sms" && <MessageSquare className="size-3.5 shrink-0" />}
+                          {patient.suggestedActionType === "email" && <Mail className="size-3.5 shrink-0" />}
+                          {patient.suggestedActionType === "call" && <Phone className="size-3.5 shrink-0" />}
+                          {patient.suggestedActionType === "appt" && <Calendar className="size-3.5 shrink-0" />}
+                          <span>{patient.suggestedAction}</span>
+                          {isDone ? (
+                            <Badge className="bg-emerald-500/15 text-emerald-600 border-none text-[10px] px-1.5 py-0 ml-1">
+                              Done
+                            </Badge>
+                          ) : (
+                            <ChevronRight className="size-3.5 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-primary" />
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -776,6 +834,170 @@ export default function ActionCentreOverview() {
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Detailed Metric Overlay Dialog */}
+      <Dialog open={Boolean(selectedMetricOverlay)} onOpenChange={(open) => !open && setSelectedMetricOverlay(null)}>
+        <DialogContent className="sm:max-w-2xl bg-background p-6 rounded-2xl shadow-xl border border-border">
+          {selectedMetricOverlay && (
+            <div className="space-y-6">
+              <DialogHeader className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {getCohortIconBox(selectedMetricOverlay.id)}
+                    <div>
+                      <DialogTitle className="text-xl font-bold text-foreground">
+                        {selectedMetricOverlay.title} Metric Details
+                      </DialogTitle>
+                      <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                        {selectedMetricOverlay.description}
+                      </DialogDescription>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="text-xs font-semibold px-3 py-1">
+                    {selectedMetricOverlay.count} Active Members
+                  </Badge>
+                </div>
+              </DialogHeader>
+
+              {/* Metric Summary Grid */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3.5 rounded-xl border bg-slate-50/70 dark:bg-slate-900/40 space-y-1">
+                  <span className="text-[11px] font-medium text-muted-foreground">Current Volume</span>
+                  <div className="text-2xl font-bold text-foreground tabular-nums">{selectedMetricOverlay.count}</div>
+                  <span className="text-[10px] text-muted-foreground">Active in queue today</span>
+                </div>
+
+                <div className="p-3.5 rounded-xl border bg-slate-50/70 dark:bg-slate-900/40 space-y-1">
+                  <span className="text-[11px] font-medium text-muted-foreground">WoW Trend</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xl font-bold text-foreground tabular-nums">{selectedMetricOverlay.wowChange}</span>
+                    <Badge className={cn("text-[10px] px-1.5 py-0 border-none", selectedMetricOverlay.wowPositive ? "bg-emerald-500/15 text-emerald-600" : "bg-rose-500/15 text-rose-600")}>
+                      {selectedMetricOverlay.wowPositive ? "Improving" : "Elevated"}
+                    </Badge>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">Vs. previous 7 days</span>
+                </div>
+
+                <div className="p-3.5 rounded-xl border bg-slate-50/70 dark:bg-slate-900/40 space-y-1">
+                  <span className="text-[11px] font-medium text-muted-foreground">MoM Trend</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xl font-bold text-foreground tabular-nums">{selectedMetricOverlay.momChange}</span>
+                    <Badge className={cn("text-[10px] px-1.5 py-0 border-none", selectedMetricOverlay.momPositive ? "bg-emerald-500/15 text-emerald-600" : "bg-rose-500/15 text-rose-600")}>
+                      {selectedMetricOverlay.momPositive ? "Improving" : "Elevated"}
+                    </Badge>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">Vs. previous 30 days</span>
+                </div>
+              </div>
+
+              {/* Graph Section with WoW / MoM Switcher */}
+              <div className="p-4 rounded-xl border bg-card shadow-2xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-bold text-foreground">Trend Trajectory</h4>
+                    <p className="text-xs text-muted-foreground">Historical volume tracking against baseline target</p>
+                  </div>
+
+                  <div className="inline-flex items-center rounded-lg border bg-muted/40 p-1">
+                    <button
+                      type="button"
+                      onClick={() => setMetricGraphView("WoW")}
+                      className={cn(
+                        "px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer",
+                        metricGraphView === "WoW"
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      WoW Trend
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMetricGraphView("MoM")}
+                      className={cn(
+                        "px-3 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer",
+                        metricGraphView === "MoM"
+                          ? "bg-primary text-primary-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      MoM Trend
+                    </button>
+                  </div>
+                </div>
+
+                <div className="h-60 w-full pt-2">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={getMetricGraphData(selectedMetricOverlay.count, metricGraphView, selectedMetricOverlay.wowPositive)}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="metricGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="var(--primary)" stopOpacity={0.0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.5} />
+                      <XAxis dataKey="period" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "var(--card)",
+                          borderColor: "var(--border)",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.75rem",
+                          boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                        }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="value"
+                        name="Active Members"
+                        stroke="var(--primary)"
+                        strokeWidth={2.5}
+                        fillOpacity={1}
+                        fill="url(#metricGradient)"
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="benchmark"
+                        name="Target Threshold"
+                        stroke="#94a3b8"
+                        strokeDasharray="4 4"
+                        strokeWidth={1.5}
+                        fill="none"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Actionable Footer Controls */}
+              <div className="flex items-center justify-between pt-2 border-t border-border/60">
+                <span className="text-xs text-muted-foreground">
+                  Ready to action these members?
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setSelectedMetricOverlay(null)}>
+                    Close
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setActiveCohort(selectedMetricOverlay.id as CohortType);
+                      if (selectedMetricOverlay.id !== "engagement-gap") setActiveGapTier("all");
+                      setSelectedMetricOverlay(null);
+                    }}
+                  >
+                    Filter Queue to {selectedMetricOverlay.title} ({selectedMetricOverlay.count})
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Page>
   );
 }

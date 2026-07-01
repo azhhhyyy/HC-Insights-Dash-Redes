@@ -9,7 +9,7 @@ export type CohortType =
   | "utilization-leakage"
   | "low-response";
 
-export type GapTier = "30-days" | "60-days" | "90-days";
+export type GapTier = "30-days" | "60-days" | "90-days" | "custom";
 
 export interface TouchpointEvent {
   id: string;
