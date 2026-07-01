@@ -149,20 +149,44 @@ export default function ActionCentreOverview() {
     }
   };
 
-  const getCohortIcon = (id: string) => {
+  const getCohortIconBox = (id: string) => {
     switch (id) {
       case "new-activation":
-        return <UserPlus className="size-5 text-emerald-500" />;
+        return (
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400">
+            <UserPlus className="size-4" />
+          </div>
+        );
       case "engagement-gap":
-        return <Clock className="size-5 text-amber-500" />;
+        return (
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
+            <Clock className="size-4" />
+          </div>
+        );
       case "high-chronic-risk":
-        return <HeartPulse className="size-5 text-rose-500" />;
+        return (
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-rose-500/10 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400">
+            <HeartPulse className="size-4" />
+          </div>
+        );
       case "utilization-leakage":
-        return <AlertTriangle className="size-5 text-purple-500" />;
+        return (
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400">
+            <AlertTriangle className="size-4" />
+          </div>
+        );
       case "low-response":
-        return <MessageSquareOff className="size-5 text-sky-500" />;
+        return (
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600 dark:bg-sky-500/20 dark:text-sky-400">
+            <MessageSquareOff className="size-4" />
+          </div>
+        );
       default:
-        return <Activity className="size-5 text-primary" />;
+        return (
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Activity className="size-4" />
+          </div>
+        );
     }
   };
 
@@ -197,10 +221,10 @@ export default function ActionCentreOverview() {
                   if (card.id !== "engagement-gap") setActiveGapTier("all");
                 }}
                 className={cn(
-                  "cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/50 relative overflow-hidden flex flex-col justify-between",
+                  "cursor-pointer rounded-2xl border transition-[box-shadow,transform,background-color,border-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] relative overflow-hidden flex flex-col justify-between active:scale-[0.98]",
                   isSelected
-                    ? "border-primary ring-2 ring-primary/20 bg-primary/[0.03] shadow-md"
-                    : "border-border/80 bg-card"
+                    ? "border-transparent ring-2 ring-primary/40 bg-primary/[0.03] shadow-md"
+                    : "border-transparent bg-card shadow-sm hover:shadow-md hover:bg-accent/30"
                 )}
               >
                 <CardContent className="p-4 flex flex-col justify-between h-full space-y-3">
@@ -208,9 +232,7 @@ export default function ActionCentreOverview() {
                     <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 line-clamp-2 leading-tight">
                       {card.title}
                     </span>
-                    <div className="shrink-0 p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800">
-                      {getCohortIcon(card.id)}
-                    </div>
+                    {getCohortIconBox(card.id)}
                   </div>
 
                   <div className="flex items-baseline gap-2">
@@ -239,14 +261,10 @@ export default function ActionCentreOverview() {
                       <span>{card.wowChange} WoW</span>
                     </div>
 
-                    <div className="text-muted-foreground/80 text-[10px]" title="Month over Month Change">
-                      {card.momChange} MoM
-                    </div>
                   </div>
 
-                  <div className="pt-2 flex items-center justify-between text-xs font-semibold text-primary group-hover:underline">
-                    <span>View Patient List</span>
-                    <ChevronRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                  <div className="pt-2 text-xs font-semibold text-primary group-hover:underline">
+                    <span>View Details</span>
                   </div>
                 </CardContent>
               </Card>
@@ -256,8 +274,8 @@ export default function ActionCentreOverview() {
       </div>
 
       {/* 2. Actionable Patient Cohorts Work Queue Controls */}
-      <Card className="border-border shadow-sm mb-6">
-        <div className="p-4 border-b border-border bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <Card className="rounded-2xl border border-transparent bg-card shadow-sm transition-[box-shadow] duration-200 hover:shadow-md mb-6 overflow-hidden">
+        <div className="p-4 border-b border-border/50 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
               <span>Patient Work Queue</span>
@@ -297,119 +315,121 @@ export default function ActionCentreOverview() {
         </div>
 
         {/* Cohort Tabs Bar */}
-        <div className="px-4 pt-3 border-b border-border overflow-x-auto">
-          <div className="flex items-center gap-2 pb-3">
-            <button
-              onClick={() => {
-                setActiveCohort("all");
-                setActiveGapTier("all");
-              }}
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5",
-                activeCohort === "all"
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-              )}
-            >
-              <span>All Requiring Attention</span>
-              <span className={cn("px-1.5 py-0.2 rounded-full text-[10px]", activeCohort === "all" ? "bg-white/20" : "bg-slate-200 dark:bg-slate-700")}>
-                148
-              </span>
-            </button>
+        <div className="px-4 pt-3 border-b border-border/50 overflow-x-auto">
+          <div className="pb-3">
+            <div className="inline-flex flex-wrap items-center gap-1 rounded-md border bg-card p-1 shadow-2xs">
+              <button
+                onClick={() => {
+                  setActiveCohort("all");
+                  setActiveGapTier("all");
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
+                  activeCohort === "all"
+                    ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <span>All Requiring Attention</span>
+                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "all" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
+                  148
+                </span>
+              </button>
 
-            <button
-              onClick={() => {
-                setActiveCohort("new-activation");
-                setActiveGapTier("all");
-              }}
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5",
-                activeCohort === "new-activation"
-                  ? "bg-emerald-600 text-white shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-              )}
-            >
-              <UserPlus className="size-3.5" />
-              <span>New Activation</span>
-              <span className={cn("px-1.5 py-0.2 rounded-full text-[10px]", activeCohort === "new-activation" ? "bg-white/20" : "bg-slate-200 dark:bg-slate-700")}>
-                28
-              </span>
-            </button>
+              <button
+                onClick={() => {
+                  setActiveCohort("new-activation");
+                  setActiveGapTier("all");
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
+                  activeCohort === "new-activation"
+                    ? "bg-emerald-600 dark:bg-emerald-500 text-white font-semibold shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <UserPlus className={cn("size-3.5", activeCohort === "new-activation" ? "text-white" : "text-emerald-500/80")} />
+                <span>New Activation</span>
+                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "new-activation" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
+                  28
+                </span>
+              </button>
 
-            <button
-              onClick={() => {
-                setActiveCohort("engagement-gap");
-              }}
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5",
-                activeCohort === "engagement-gap"
-                  ? "bg-amber-600 text-white shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-              )}
-            >
-              <Clock className="size-3.5" />
-              <span>Engagement Gap</span>
-              <span className={cn("px-1.5 py-0.2 rounded-full text-[10px]", activeCohort === "engagement-gap" ? "bg-white/20" : "bg-slate-200 dark:bg-slate-700")}>
-                54
-              </span>
-            </button>
+              <button
+                onClick={() => {
+                  setActiveCohort("engagement-gap");
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
+                  activeCohort === "engagement-gap"
+                    ? "bg-amber-600 dark:bg-amber-500 text-white font-semibold shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <Clock className={cn("size-3.5", activeCohort === "engagement-gap" ? "text-white" : "text-amber-500/80")} />
+                <span>Engagement Gap</span>
+                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "engagement-gap" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
+                  54
+                </span>
+              </button>
 
-            <button
-              onClick={() => {
-                setActiveCohort("high-chronic-risk");
-                setActiveGapTier("all");
-              }}
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5",
-                activeCohort === "high-chronic-risk"
-                  ? "bg-rose-600 text-white shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-              )}
-            >
-              <HeartPulse className="size-3.5" />
-              <span>High Chronic Risk</span>
-              <span className={cn("px-1.5 py-0.2 rounded-full text-[10px]", activeCohort === "high-chronic-risk" ? "bg-white/20" : "bg-slate-200 dark:bg-slate-700")}>
-                31
-              </span>
-            </button>
+              <button
+                onClick={() => {
+                  setActiveCohort("high-chronic-risk");
+                  setActiveGapTier("all");
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
+                  activeCohort === "high-chronic-risk"
+                    ? "bg-rose-600 dark:bg-rose-500 text-white font-semibold shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <HeartPulse className={cn("size-3.5", activeCohort === "high-chronic-risk" ? "text-white" : "text-rose-500/80")} />
+                <span>High Chronic Risk</span>
+                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "high-chronic-risk" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
+                  31
+                </span>
+              </button>
 
-            <button
-              onClick={() => {
-                setActiveCohort("utilization-leakage");
-                setActiveGapTier("all");
-              }}
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5",
-                activeCohort === "utilization-leakage"
-                  ? "bg-purple-600 text-white shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-              )}
-            >
-              <AlertTriangle className="size-3.5" />
-              <span>Utilization Leakage</span>
-              <span className={cn("px-1.5 py-0.2 rounded-full text-[10px]", activeCohort === "utilization-leakage" ? "bg-white/20" : "bg-slate-200 dark:bg-slate-700")}>
-                19
-              </span>
-            </button>
+              <button
+                onClick={() => {
+                  setActiveCohort("utilization-leakage");
+                  setActiveGapTier("all");
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
+                  activeCohort === "utilization-leakage"
+                    ? "bg-purple-600 dark:bg-purple-500 text-white font-semibold shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <AlertTriangle className={cn("size-3.5", activeCohort === "utilization-leakage" ? "text-white" : "text-purple-500/80")} />
+                <span>Utilization Leakage</span>
+                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "utilization-leakage" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
+                  19
+                </span>
+              </button>
 
-            <button
-              onClick={() => {
-                setActiveCohort("low-response");
-                setActiveGapTier("all");
-              }}
-              className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shrink-0 flex items-center gap-1.5",
-                activeCohort === "low-response"
-                  ? "bg-sky-600 text-white shadow-sm"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-              )}
-            >
-              <MessageSquareOff className="size-3.5" />
-              <span>Low Response</span>
-              <span className={cn("px-1.5 py-0.2 rounded-full text-[10px]", activeCohort === "low-response" ? "bg-white/20" : "bg-slate-200 dark:bg-slate-700")}>
-                16
-              </span>
-            </button>
+              <button
+                onClick={() => {
+                  setActiveCohort("low-response");
+                  setActiveGapTier("all");
+                }}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs transition-colors",
+                  activeCohort === "low-response"
+                    ? "bg-sky-600 dark:bg-sky-500 text-white font-semibold shadow-sm"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                )}
+              >
+                <MessageSquareOff className={cn("size-3.5", activeCohort === "low-response" ? "text-white" : "text-sky-500/80")} />
+                <span>Low Response</span>
+                <span className={cn("px-1.5 py-0.5 rounded-full text-[10px] tabular-nums font-semibold", activeCohort === "low-response" ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
+                  16
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Sub-filters for Engagement Gap */}
@@ -470,7 +490,7 @@ export default function ActionCentreOverview() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-border bg-slate-50/70 dark:bg-slate-900/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <tr className="border-b border-border/50 bg-slate-50/70 dark:bg-slate-900/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 <th className="py-3 px-4">Patient Member</th>
                 <th className="py-3 px-4">Priority Level</th>
                 <th className="py-3 px-4">Reason for Inclusion</th>
@@ -623,7 +643,7 @@ export default function ActionCentreOverview() {
 
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {/* Recommended Action Box */}
-                <Card className="border-primary/40 bg-primary/[0.04] p-4 space-y-3 shadow-sm">
+                <Card className="rounded-xl border border-transparent ring-1 ring-primary/25 bg-primary/[0.04] p-4 space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 font-bold text-primary text-sm">
                       <AlertCircle className="size-4" />
@@ -677,7 +697,7 @@ export default function ActionCentreOverview() {
                             <div className="size-6 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0 z-10 text-[10px] font-bold">
                               {ev.type[0]}
                             </div>
-                            <div className="flex-1 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-border/80 text-xs space-y-1">
+                            <div className="flex-1 bg-slate-50/70 dark:bg-slate-900/50 p-3 rounded-xl border border-transparent shadow-sm text-xs space-y-1">
                               <div className="flex items-center justify-between font-semibold">
                                 <span>{ev.type} Outreach</span>
                                 <span className="text-muted-foreground font-normal">{ev.date}</span>
@@ -708,7 +728,7 @@ export default function ActionCentreOverview() {
                       </div>
                     ) : (
                       selectedPatient.recentEncounters.map((enc) => (
-                        <div key={enc.id} className="p-3 rounded-lg border border-border bg-card text-xs space-y-1.5">
+                        <div key={enc.id} className="p-3 rounded-xl border border-transparent bg-card shadow-sm text-xs space-y-1.5">
                           <div className="flex items-center justify-between font-bold text-foreground">
                             <span>{enc.type}</span>
                             <span className="text-muted-foreground font-normal">{enc.date}</span>
