@@ -3,8 +3,6 @@ import {
   Activity,
   UserPlus,
   Clock,
-  HeartPulse,
-  AlertTriangle,
   MessageSquareOff,
   Search,
   Filter,
@@ -209,18 +207,6 @@ export default function ActionCentreOverview() {
             <Clock className="size-3.5" />
           </div>
         );
-      case "high-chronic-risk":
-        return (
-          <div className={baseClass}>
-            <HeartPulse className="size-3.5" />
-          </div>
-        );
-      case "utilization-leakage":
-        return (
-          <div className={baseClass}>
-            <AlertTriangle className="size-3.5" />
-          </div>
-        );
       case "low-response":
         return (
           <div className={baseClass}>
@@ -240,11 +226,8 @@ export default function ActionCentreOverview() {
     <Page
       title="Action Centre"
       subtitle="Phase 1: Operational Visibility — Replace passive reporting with daily actionable patient work queues."
-      leading={
-        <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
-          <Activity className="size-5" />
-        </div>
-      }
+      showFilters={false}
+      showIconActions={false}
     >
       {/* 1. Engagement Overview Cards */}
       <div className="mb-8">
@@ -256,7 +239,7 @@ export default function ActionCentreOverview() {
             Click any card to switch patient queue view
           </span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {COHORT_SUMMARIES.map((card) => {
             const isSelected = activeCohort === card.id;
             return (
@@ -376,7 +359,7 @@ export default function ActionCentreOverview() {
                 {
                   id: "all" as const,
                   label: "All Requiring Attention",
-                  count: 148,
+                  count: 98,
                   icon: null,
                   activeBg: "bg-primary",
                   activeText: "text-primary-foreground font-semibold",
@@ -402,26 +385,6 @@ export default function ActionCentreOverview() {
                   activeText: "text-white font-semibold",
                   activeBadge: "bg-white/20 text-white",
                   unselectedIcon: "text-amber-500/80",
-                },
-                {
-                  id: "high-chronic-risk" as const,
-                  label: "High Chronic Risk",
-                  count: 31,
-                  icon: HeartPulse,
-                  activeBg: "bg-rose-600 dark:bg-rose-500",
-                  activeText: "text-white font-semibold",
-                  activeBadge: "bg-white/20 text-white",
-                  unselectedIcon: "text-rose-500/80",
-                },
-                {
-                  id: "utilization-leakage" as const,
-                  label: "Utilization Leakage",
-                  count: 19,
-                  icon: AlertTriangle,
-                  activeBg: "bg-purple-600 dark:bg-purple-500",
-                  activeText: "text-white font-semibold",
-                  activeBadge: "bg-white/20 text-white",
-                  unselectedIcon: "text-purple-500/80",
                 },
                 {
                   id: "low-response" as const,

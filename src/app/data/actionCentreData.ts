@@ -5,8 +5,6 @@ export type PriorityLevel = "High" | "Medium" | "Low";
 export type CohortType = 
   | "new-activation"
   | "engagement-gap"
-  | "high-chronic-risk"
-  | "utilization-leakage"
   | "low-response";
 
 export type GapTier = "30-days" | "60-days" | "90-days" | "custom";
@@ -74,7 +72,7 @@ export const COHORT_SUMMARIES: CohortSummaryCard[] = [
   {
     id: "all",
     title: "Total Requiring Attention",
-    count: 148,
+    count: 98,
     wowChange: "+12.4%",
     wowPositive: false, // More patients needing attention is an operational alert
     momChange: "-4.1%",
@@ -102,26 +100,6 @@ export const COHORT_SUMMARIES: CohortSummaryCard[] = [
     description: "Patients with zero DPC encounters in the last 30, 60, or 90+ days.",
   },
   {
-    id: "high-chronic-risk",
-    title: "High Chronic Risk",
-    count: 31,
-    wowChange: "-3.1%",
-    wowPositive: true,
-    momChange: "-8.4%",
-    momPositive: true,
-    description: "Members with active chronic diagnoses missing routine preventive follow-up.",
-  },
-  {
-    id: "utilization-leakage",
-    title: "Utilization Leakage",
-    count: 19,
-    wowChange: "+15.0%",
-    wowPositive: false,
-    momChange: "+5.2%",
-    momPositive: false,
-    description: "Members with external urgent care or ER claims without prior DPC contact.",
-  },
-  {
     id: "low-response",
     title: "Low Response",
     count: 16,
@@ -146,18 +124,6 @@ const REASONS_BY_COHORT: Record<CohortType, string[]> = {
     "No DPC encounter in 112 days • High BMI baseline",
     "No DPC encounter in 38 days • Expired prescription refill check",
   ],
-  "high-chronic-risk": [
-    "Type 2 Diabetes (E11.9) • HbA1c lab due • Last visit 78 days ago",
-    "Essential Hypertension (I10) • BP check overdue by 45 days",
-    "Hyperlipidemia (E78.5) • Medication adherence check required",
-    "Asthma (J45.909) • Seasonal pulmonary follow-up overdue",
-  ],
-  "utilization-leakage": [
-    "External Urgent Care claim ($340) on 06/18 • Upper respiratory",
-    "ER Outpatient claim ($1,450) on 06/12 • Back strain without DPC call",
-    "Specialist self-referral claim ($280) • Dermatological consult",
-    "External diagnostic lab claim ($195) • Uncoordinated bloodwork",
-  ],
   "low-response": [
     "3 unreturned automated SMS reminders in June • Needs voice call",
     "4 unopened emails regarding scheduling • Switch to Spruce SMS",
@@ -179,16 +145,6 @@ const ACTIONS_BY_COHORT: Record<CohortType, { text: string; type: "email" | "sms
     { text: "Call for Preventive Screening Check", type: "call" },
     { text: "Email Personalized Health Check Reminder", type: "email" },
   ],
-  "high-chronic-risk": [
-    { text: "Care Coordinator Priority Call", type: "call" },
-    { text: "Schedule Chronic Disease Review Appt", type: "appt" },
-    { text: "Send Lab Requisition & SMS Reminder", type: "sms" },
-  ],
-  "utilization-leakage": [
-    { text: "Call Patient — Educate on 24/7 DPC Access", type: "call" },
-    { text: "Schedule Post-Urgent Care Follow-up", type: "appt" },
-    { text: "Send DPC Urgent Care Avoidance Guide", type: "email" },
-  ],
   "low-response": [
     { text: "Call Secondary Emergency Phone Number", type: "call" },
     { text: "Switch to Spruce Direct Secure Message", type: "sms" },
@@ -196,20 +152,16 @@ const ACTIONS_BY_COHORT: Record<CohortType, { text: string; type: "email" | "sms
   ],
 };
 
-// Generate deterministic list of 148 patients
-export const ACTION_CENTRE_PATIENTS: ActionCentrePatientRow[] = Array.from({ length: 148 }, (_, idx) => {
+// Generate deterministic list of 98 patients
+export const ACTION_CENTRE_PATIENTS: ActionCentrePatientRow[] = Array.from({ length: 98 }, (_, idx) => {
   const name = fullName();
   let cohort: CohortType;
   if (idx < 28) cohort = "new-activation";
   else if (idx < 82) cohort = "engagement-gap";
-  else if (idx < 113) cohort = "high-chronic-risk";
-  else if (idx < 132) cohort = "utilization-leakage";
   else cohort = "low-response";
 
   let priority: PriorityLevel = "Medium";
-  if (cohort === "high-chronic-risk" || cohort === "utilization-leakage") {
-    priority = rand() > 0.3 ? "High" : "Medium";
-  } else if (cohort === "engagement-gap") {
+  if (cohort === "engagement-gap") {
     priority = rand() > 0.6 ? "High" : rand() > 0.4 ? "Medium" : "Low";
   } else {
     priority = rand() > 0.5 ? "Medium" : "Low";
