@@ -267,6 +267,37 @@ export default function Home() {
 
   return (
     <Page title={greeting} subtitle={subtitleText}>
+      {/* Action Centre Banner */}
+      <div className="mb-6 stagger-section">
+        <div className="rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/15 via-primary/5 to-background p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
+              <Activity className="size-6 animate-pulse" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-bold text-foreground">
+                  Action Centre
+                </h2>
+                <span className="rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary">
+                  Phase 1 Operational Queue
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground max-w-2xl">
+                Replace passive analytics with daily actionable queues. 148 patients flagged today across New Activation, Engagement Gaps, High Chronic Risk, Utilization Leakage, and Low Response.
+              </p>
+            </div>
+          </div>
+          <Button
+            onClick={() => navigate("/action-centre")}
+            className="shrink-0 font-semibold shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
+          >
+            <span>Open Action Centre</span>
+            <ArrowRight className="size-4" />
+          </Button>
+        </div>
+      </div>
+
       {/* Quick Actions Row */}
       <div className="mb-6 stagger-section">
         <div className="flex items-center gap-2 mb-3">

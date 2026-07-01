@@ -1,5 +1,6 @@
 import {
   Home,
+  Activity,
   BarChart3,
   Users,
   HeartPulse,
@@ -35,6 +36,7 @@ export type NavItem = {
 /** Primary analytics modules, in display order, matching the Figma frame. */
 export const NAV_ITEMS: NavItem[] = [
   { key: "home", label: "Home", icon: Home, path: "/home" },
+  { key: "action-centre", label: "Action Centre (Hub)", icon: Activity, path: "/action-centre", tourId: "tour-step-action-centre" },
   { 
     key: "engagement", 
     label: "Engagement & Utilization", 

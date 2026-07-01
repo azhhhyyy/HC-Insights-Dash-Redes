@@ -3,6 +3,7 @@ import { AppShell } from "./components/layout/AppShell";
 import Onboarding from "./pages/auth/Onboarding";
 import SupportPage from "./pages/Support";
 import Home from "./pages/Home";
+import ActionCentreOverview from "./pages/action-centre/ActionCentreOverview";
 import EngagementOverview from "./pages/engagement/Overview";
 import Encounters from "./pages/engagement/Encounters";
 import ActivePatients from "./pages/engagement/ActivePatients";
@@ -81,6 +82,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/home" replace /> },
       { path: "home", Component: Home },
+      { path: "action-centre", Component: ActionCentreOverview },
       { path: "engagement", Component: EngagementOverview },
       { path: "engagement/active-patients", Component: ActivePatients },
       { path: "engagement/total-active-patients", Component: TotalActivePatients },
